@@ -3,7 +3,8 @@ project(cpp_zia)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(sza/api)
+include_directories(sza/api include)
 
 add_executable(zia
+        srcs/Network/UnixSocket.cpp
         srcs/main.cpp)
