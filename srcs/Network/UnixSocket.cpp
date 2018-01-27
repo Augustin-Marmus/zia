@@ -2,7 +2,7 @@
 // Created by marmus_a on 25/01/18.
 //
 
-#include "../../include/Network/UnixSocket.hpp"
+#include "Network/UnixSocket.hpp"
 
 UnixSocket::UnixSocket() {
     struct protoent *proto;
@@ -57,12 +57,19 @@ int UnixSocket::send(const std::string &str) {
     return (::send(this->socket, str.c_str(), str.size(), 0));
 }
 
-int UnixSocket::read(std::string &buff) {
+int UnixSocket::recv(std::string &buff) {
     char   buffer[4096];
     int    res;
 
-    res = recv(this->socket, &buffer, 4096, 0);
+    res = ::recv(this->socket, &buffer, 4096, 0);
     buffer[res] = 0;
     buff = buffer;
     return (res);
+}
+
+std::ostream&    operator<<(std::ostream& out, const ISocket& sock)
+{
+    auto socket = dynamic_cast<const UnixSocket *>(&sock);
+    out << "[" << inet_ntoa(socket->addr.sin_addr) << "]";
+    return (out);
 }

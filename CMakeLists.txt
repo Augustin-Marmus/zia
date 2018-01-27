@@ -3,8 +3,19 @@ project(cpp_zia)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(sza/api include)
+set (CMAKE_CXX_FLAGS "-std=c++17")
+
+include_directories(sza include)
 
 add_executable(zia
+        # CLion Project Includes
+        include/Network/ISocket.hpp
+        include/Network/UnixSocket.hpp
+
+        sza/api/http.h
+        sza/api/net.h
+        sza/api/conf.h
+        sza/api/module.h
+
         srcs/Network/UnixSocket.cpp
-        srcs/main.cpp)
+        srcs/main.cpp srcs/Core/Pipeline.cpp include/Core/Pipeline.hpp)

@@ -20,19 +20,22 @@ public:
     UnixSocket();
     virtual ~UnixSocket() = default;
 
-    virtual bool            bind(const std::string& addr, const std::string& port);
-    virtual bool            bind(const std::string& addr, int port);
-    virtual bool            listen();
-    virtual bool            accept(ISocket& socket);
-    virtual bool            close();
+    virtual bool                    bind(const std::string& addr, const std::string& port);
+    virtual bool                    bind(const std::string& addr, int port);
+    virtual bool                    listen();
+    virtual bool                    accept(ISocket& socket);
+    virtual bool                    close();
 
-    virtual int             send(const std::string& str);
-    virtual int            read(std::string& buff);
+    virtual int                     send(const std::string& str);
+    virtual int                     recv(std::string& buff);
+
+    friend std::ostream&    operator<<(std::ostream& out, const ISocket& sock);
 
 protected:
-    int                     socket;
-    sockaddr_in             addr;
+    int                             socket;
+    sockaddr_in                     addr;
 };
 
+std::ostream&    operator<<(std::ostream& out, const ISocket& sock);
 
 #endif //CPP_ZIA_UNIXSOCKET_HPP
