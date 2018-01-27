@@ -11,6 +11,7 @@ add_executable(zia
         # CLion Project Includes
         include/Network/ISocket.hpp
         include/Network/UnixSocket.hpp
+		include/Core/Pipeline.hpp
 
         sza/api/http.h
         sza/api/net.h
@@ -18,4 +19,5 @@ add_executable(zia
         sza/api/module.h
 
         srcs/Network/UnixSocket.cpp
-        srcs/main.cpp srcs/Core/Pipeline.cpp include/Core/Pipeline.hpp)
+		srcs/Core/Pipeline.cpp
+        srcs/main.cpp  )
