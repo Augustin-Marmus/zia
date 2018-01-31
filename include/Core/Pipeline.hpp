@@ -5,10 +5,10 @@
 #ifndef CPP_ZIA_PIPELINE_HPP
 #define CPP_ZIA_PIPELINE_HPP
 
-#include <bits/unique_ptr.h>
+#include <memory>
 #include "api/module.h"
 
-class Pipeline : std::map<std::string, std::unique_ptr<zia::api::Module>>{
+class Pipeline : public std::map<std::string, std::shared_ptr<zia::api::Module>>{
 public:
     Pipeline() = default;
     ~Pipeline() = default;

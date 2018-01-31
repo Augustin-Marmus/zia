@@ -1,23 +1,39 @@
 cmake_minimum_required(VERSION 3.9)
 project(cpp_zia)
 
-set(CMAKE_CXX_STANDARD 17)
-
-set (CMAKE_CXX_FLAGS "-std=c++17")
-
 include_directories(sza include)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_executable(zia
         # CLion Project Includes
-        include/Network/ISocket.hpp
-        include/Network/UnixSocket.hpp
 		include/Core/Pipeline.hpp
+		include/Core/IModuleLoader.hpp
+        include/Core/UnixModuleLoader.hpp
 
         sza/api/http.h
         sza/api/net.h
         sza/api/conf.h
         sza/api/module.h
 
-        srcs/Network/UnixSocket.cpp
+        #[[srcs/Network/UnixSocket.cpp]]
 		srcs/Core/Pipeline.cpp
-        srcs/main.cpp  )
+        srcs/main.cpp
+        srcs/Core/UnixModuleLoader.cpp
+        )
+
+add_library(zia-network SHARED
+        include/Network/ISocket.hpp
+        include/Network/UnixSocket.hpp
+		include/Network/Socket.hpp
+		include/Network/Network.hpp
+        srcs/Network/UnixSocket.cpp
+        srcs/Network/Loader.cpp
+		srcs/Network/Network.cpp)
+
+if (UNIX)
+	target_link_libraries(zia dl pthread)
+	set (CMAKE_CXX_FLAGS "-std=c++17 -ggdb3")
+endif(UNIX)

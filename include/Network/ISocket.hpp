@@ -19,6 +19,8 @@ public:
 
     virtual int             send(const std::string& str) = 0;
     virtual int             recv(std::string& buff) = 0;
+    virtual int             getSocket() const = 0;
+    virtual bool            isOpen() const = 0;
 };
 
 class zia::api::ImplSocket : public ISocket {};

@@ -7,13 +7,18 @@
 UnixSocket::UnixSocket() {
     struct protoent *proto;
 
+    this->opened = false;
     if (!(proto = ::getprotobyname("TCP"))) {
         std::cerr << "Failed to find TCP protocol" << std::endl;
     } else {
-        if ((this->socket = ::socket(AF_INET, SOCK_STREAM, proto->p_proto)) < 1) {
+        if ((this->socket = ::socket(AF_INET, SOCK_STREAM, proto->p_proto)) < 0) {
             std::cerr << "Failed to open socket" << std::endl;
         }
     }
+}
+
+UnixSocket::~UnixSocket() {
+    this->close();
 }
 
 bool UnixSocket::bind(const std::string &addr, const std::string &port) {
@@ -24,15 +29,16 @@ bool UnixSocket::bind(const std::string &addr, int port) {
     this->addr.sin_family = AF_INET;
     this->addr.sin_port = htons(port);
     this->addr.sin_addr.s_addr = INADDR_ANY;
-    if (::bind(this->socket, (const struct sockaddr *)(&this->addr), sizeof(this->addr)) == -1)
+    if (::bind(this->socket, (const struct sockaddr *)(&this->addr), sizeof(this->addr)) < 0)
     {
-        perror("bind: ");
+        perror("bind");
         return (false);
     }
     return (true);
 }
 
 bool UnixSocket::listen() {
+    this->opened = true;
     return (!::listen(this->socket, UnixSocket::MAXQUEUE));
 }
 
@@ -44,12 +50,14 @@ bool UnixSocket::accept(ISocket &socket) {
             std::cerr << "Fail to accept " << inet_ntoa(unixSocket->addr.sin_addr) << std::endl;
             return (false);
         }
+        unixSocket->opened = true;
         return (true);
     }
     return (false);
 }
 
 bool UnixSocket::close() {
+    this->opened = false;
     return(!::close(this->socket));
 }
 
@@ -72,4 +80,12 @@ std::ostream&    operator<<(std::ostream& out, const ISocket& sock)
     auto socket = dynamic_cast<const UnixSocket *>(&sock);
     out << "[" << inet_ntoa(socket->addr.sin_addr) << "]";
     return (out);
+}
+
+int UnixSocket::getSocket() const {
+    return {this->socket};
+}
+
+bool UnixSocket::isOpen() const {
+    return this->opened;
 }

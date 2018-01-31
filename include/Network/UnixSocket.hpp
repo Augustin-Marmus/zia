@@ -18,7 +18,7 @@ class UnixSocket : public ISocket {
 public:
     const static int MAXQUEUE = 1024;
     UnixSocket();
-    virtual ~UnixSocket() = default;
+    virtual ~UnixSocket();
 
     virtual bool                    bind(const std::string& addr, const std::string& port);
     virtual bool                    bind(const std::string& addr, int port);
@@ -29,11 +29,15 @@ public:
     virtual int                     send(const std::string& str);
     virtual int                     recv(std::string& buff);
 
-    friend std::ostream&    operator<<(std::ostream& out, const ISocket& sock);
+    virtual int                     getSocket() const;
+    virtual bool                    isOpen() const;
+
+    friend std::ostream&            operator<<(std::ostream& out, const ISocket& sock);
 
 protected:
     int                             socket;
     sockaddr_in                     addr;
+    bool                            opened;
 };
 
 std::ostream&    operator<<(std::ostream& out, const ISocket& sock);
