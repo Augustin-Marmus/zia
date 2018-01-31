@@ -12,7 +12,8 @@
 
 int main(int ac, char **av) {
     if (ac > 1) {
-        Pipeline        pipeline;
+
+      Pipeline        pipeline;
         std::shared_ptr<IModuleLoader>   moduleLoader(new UnixModuleLoader());
         char buff[4096];
         getcwd(buff, 4096);
