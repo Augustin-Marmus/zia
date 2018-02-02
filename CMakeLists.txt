@@ -12,6 +12,7 @@ add_executable(zia
 		include/Core/Pipeline.hpp
 		include/Core/IModuleLoader.hpp
         include/Core/UnixModuleLoader.hpp
+		include/Core/ThreadPool.hpp
 
         sza/api/http.h
         sza/api/net.h
@@ -22,18 +23,20 @@ add_executable(zia
 		srcs/Core/Pipeline.cpp
         srcs/main.cpp
         srcs/Core/UnixModuleLoader.cpp
-        )
+		srcs/Core/ThreadPool.cpp)
 
 add_library(zia-network SHARED
         include/Network/ISocket.hpp
         include/Network/UnixSocket.hpp
 		include/Network/Socket.hpp
 		include/Network/Network.hpp
+
         srcs/Network/UnixSocket.cpp
         srcs/Network/Loader.cpp
 		srcs/Network/Network.cpp)
 
 if (UNIX)
 	target_link_libraries(zia dl pthread)
+	target_link_libraries(zia-network pthread)
 	set (CMAKE_CXX_FLAGS "-std=c++17 -ggdb3")
 endif(UNIX)

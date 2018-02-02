@@ -32,14 +32,13 @@ public:
     virtual int                     getSocket() const;
     virtual bool                    isOpen() const;
 
-    friend std::ostream&            operator<<(std::ostream& out, const ISocket& sock);
+    virtual const zia::api::NetInfo&    getInfo() const;
 
 protected:
     int                             socket;
     sockaddr_in                     addr;
+    zia::api::NetInfo               netInfo;
     bool                            opened;
 };
-
-std::ostream&    operator<<(std::ostream& out, const ISocket& sock);
 
 #endif //CPP_ZIA_UNIXSOCKET_HPP
