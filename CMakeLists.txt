@@ -23,7 +23,7 @@ add_executable(zia
 		srcs/Core/Pipeline.cpp
         srcs/main.cpp
         srcs/Core/UnixModuleLoader.cpp
-		srcs/Core/ThreadPool.cpp)
+		srcs/Core/ThreadPool.cpp include/Core/ModuleLoader.hpp)
 
 add_library(zia-network SHARED
         include/Network/ISocket.hpp

@@ -4,19 +4,14 @@
 
 #include <iostream>
 #include <memory>
-#include <unistd.h>
 #include <Core/Pipeline.hpp>
-#include <Core/IModuleLoader.hpp>
-#include <Core/UnixModuleLoader.hpp>
+#include <Core/ModuleLoader.hpp>
 #include <thread>
 
 int main(int ac, char **av) {
     if (ac > 1) {
         Pipeline        pipeline;
-        std::shared_ptr<IModuleLoader>   moduleLoader(new UnixModuleLoader());
-        char buff[4096];
-        getcwd(buff, 4096);
-        std::cout << "Working Directory: " << buff << std::endl;
+        std::shared_ptr<IModuleLoader>   moduleLoader(new ModuleLoader());
         //TODO Config          config("path");
 
         //          Config en dur TMP
