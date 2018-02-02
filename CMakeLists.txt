@@ -10,8 +10,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 add_executable(zia
         # CLion Project Includes
 		include/Core/Pipeline.hpp
-		include/Core/IModuleLoader.hpp
-        include/Core/UnixModuleLoader.hpp
+		include/Core/ModuleLoader.hpp
 		include/Core/ThreadPool.hpp
 
         sza/api/http.h
@@ -19,19 +18,23 @@ add_executable(zia
         sza/api/conf.h
         sza/api/module.h
 
-        #[[srcs/Network/UnixSocket.cpp]]
 		srcs/Core/Pipeline.cpp
         srcs/main.cpp
-        srcs/Core/UnixModuleLoader.cpp
+		if (WINDOW)
+			srcs/Core/WinModuleLoader.cpp
+		endif (WINDOW)
+		if (UNIX)
+			srcs/Core/UnixModuleLoader.cpp
+		endif (UNIX)
 		srcs/Core/ThreadPool.cpp include/Core/ModuleLoader.hpp)
 
 add_library(zia-network SHARED
-        include/Network/ISocket.hpp
-        include/Network/UnixSocket.hpp
 		include/Network/Socket.hpp
 		include/Network/Network.hpp
 
-        srcs/Network/UnixSocket.cpp
+		if (UNIX)
+			srcs/Network/UnixSocket.cpp
+		endif (UNIX)
         srcs/Network/Loader.cpp
 		srcs/Network/Network.cpp)
 
