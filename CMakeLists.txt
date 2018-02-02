@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+if (UNIX)
 add_executable(zia
         # CLion Project Includes
 		include/Core/Pipeline.hpp
@@ -20,23 +21,46 @@ add_executable(zia
 
 		srcs/Core/Pipeline.cpp
         srcs/main.cpp
-		if (WINDOW)
+		srcs/Core/UnixModuleLoader.cpp
+		srcs/Core/ThreadPool.cpp)
+endif (UNIX)
+
+if (WINDOW)
+	add_executable(zia
+			# CLion Project Includes
+			include/Core/Pipeline.hpp
+			include/Core/ModuleLoader.hpp
+			include/Core/ThreadPool.hpp
+
+			sza/api/http.h
+			sza/api/net.h
+			sza/api/conf.h
+			sza/api/module.h
+
+			srcs/Core/Pipeline.cpp
+			srcs/main.cpp
 			srcs/Core/WinModuleLoader.cpp
-		endif (WINDOW)
-		if (UNIX)
-			srcs/Core/UnixModuleLoader.cpp
-		endif (UNIX)
-		srcs/Core/ThreadPool.cpp include/Core/ModuleLoader.hpp)
+			srcs/Core/ThreadPool.cpp)
+endif (WINDOW)
 
-add_library(zia-network SHARED
-		include/Network/Socket.hpp
-		include/Network/Network.hpp
+if (UNIX)
+	add_library(zia-network SHARED
+			include/Network/Socket.hpp
+			include/Network/Network.hpp
 
-		if (UNIX)
 			srcs/Network/UnixSocket.cpp
-		endif (UNIX)
-        srcs/Network/Loader.cpp
-		srcs/Network/Network.cpp)
+			srcs/Network/Loader.cpp
+			srcs/Network/Network.cpp)
+endif (UNIX)
+
+if (WINDOW)
+	add_library(zia-network SHARED
+			include/Network/Socket.hpp
+			include/Network/Network.hpp
+
+			srcs/Network/Loader.cpp
+			srcs/Network/Network.cpp)
+endif (WINDOW)
 
 if (UNIX)
 	target_link_libraries(zia dl pthread)
