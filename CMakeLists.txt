@@ -13,6 +13,7 @@ add_executable(zia
 		include/Core/Pipeline.hpp
 		include/Core/ModuleLoader.hpp
 		include/Core/ThreadPool.hpp
+		include/Core/ConfParser.hpp
 
         sza/api/http.h
         sza/api/net.h
@@ -22,7 +23,8 @@ add_executable(zia
 		srcs/Core/Pipeline.cpp
         srcs/main.cpp
 		srcs/Core/UnixModuleLoader.cpp
-		srcs/Core/ThreadPool.cpp)
+		srcs/Core/ThreadPool.cpp
+		srcs/Core/ConfParser.cpp)
 endif (UNIX)
 
 if (WINDOW)
