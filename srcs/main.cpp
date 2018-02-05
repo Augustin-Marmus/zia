@@ -6,6 +6,7 @@
 #include <memory>
 #include <Core/Pipeline.hpp>
 #include <Core/ModuleLoader.hpp>
+#include <Core/ConfParser.hpp>
 #include <thread>
 
 int main(int ac, char **av) {
@@ -24,6 +25,10 @@ int main(int ac, char **av) {
         conf["netModule"].v = std::string("test");
         conf["modules"].v = tmp;
         conf["modulesPath"].v = std::string("./lib/");
+
+        ConfParser confParser("../config.json");
+        confParser.Parse();
+
         //          end
 
         zia::api::ConfArray& moduleList =  std::get<zia::api::ConfArray>(conf["modules"].v);

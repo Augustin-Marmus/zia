@@ -14,6 +14,7 @@ add_executable(zia
 		include/Core/ModuleLoader.hpp
 		include/Core/ThreadPool.hpp
 		include/Core/ConfParser.hpp
+		include/Core/JsonObject.hpp
 
         sza/api/http.h
         sza/api/net.h
@@ -24,7 +25,8 @@ add_executable(zia
         srcs/main.cpp
 		srcs/Core/UnixModuleLoader.cpp
 		srcs/Core/ThreadPool.cpp
-		srcs/Core/ConfParser.cpp)
+		srcs/Core/ConfParser.cpp
+		srcs/Core/JsonObject.cpp)
 endif (UNIX)
 
 if (WINDOW)

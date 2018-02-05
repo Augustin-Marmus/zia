@@ -1,0 +1,7 @@
+{
+    "config" : [
+	{"name":"net", "moduleName":"net.cgi", "id":"123456789",  "other":[{"test":"test"}]},
+	{"name":"log", "moduleName":"log.cgi", "id":"987654321",  "other":[{"test":"test"}]},
+	{"name":"ssl", "moduleName":"ssl.cgi", "id":"987654321", "other":[{"test":"test"}]},
+    ]
+}
