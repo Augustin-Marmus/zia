@@ -3,37 +3,56 @@
 //
 
 #pragma once
+#include <iostream>
 #include "Core/WinModuleLoader.hpp"
-#include "..\..\include\Core\WinModuleLoader.hpp"
 
 WinModuleLoader::WinModuleLoader()
 {
-	this->handler = nullptr:
+	this->handler = nullptr;
 }
 
 WinModuleLoader::~WinModuleLoader()
 {
 	if (this->handler) {
-		//TODO close handler
+		this->unloadModule();
 	}
 }
 
 bool WinModuleLoader::loadLibrary(const std::string & path, const std::string & file)
 {
-	return false;
+	if (this->handler) {
+		this->unloadModule();
+	}
+
+	return (!!(this->handler = LoadLibrary(TEXT((path + file + ".dll").c_str()))));
 }
 
 zia::api::Module * WinModuleLoader::loadModule(const std::string & moduleName)
 {
-	return nullptr;
+	zia::api::Module*		(*ptr)();
+
+	ptr = reinterpret_cast<zia::api::Module*(*)()>(GetProcAddress(this->handler, (std::string("get") + moduleName).c_str()));
+	if (ptr) {
+		return (ptr());
+	} else {
+		return (nullptr);
+	}
 }
 
 zia::api::Net * WinModuleLoader::loadNetwork()
 {
-	return nullptr;
+	zia::api::Net*		(*ptr)();
+
+	ptr = reinterpret_cast<zia::api::Net*(*)()>(GetProcAddress(this->handler, "getNetwork"));
+	if (ptr) {
+		return (ptr());
+	} else {
+		return (nullptr);
+	}
 }
 
 bool WinModuleLoader::unloadModule()
 {
-	return false;
+	this->handler = nullptr;
+	return (true);
 }

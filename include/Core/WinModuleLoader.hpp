@@ -7,6 +7,8 @@
 #define CPP_ZIA_WINMODULELOADER_HPP
 
 #include <memory>
+#include <Windows.h>
+//#include <Winbase.h>
 #include "IModuleLoader.hpp"
 
 class WinModuleLoader : public IModuleLoader {
@@ -19,7 +21,7 @@ public:
 	virtual bool                                    unloadModule();
 
 private:
-	void*                                       handler;
+	HMODULE	                                        handler;
 };
 
 #endif //CPP_ZIA_WINMODULELOADER_HPP

@@ -13,7 +13,7 @@ using ModuleLoader = UnixModuleLoader;
 #endif
 #ifdef _WIN32
 
-#include <Netwok/WinSModuleLoader.hpp>
+#include <Core/WinModuleLoader.hpp>
 using ModuleLoader = WinModuleLoader;
 
 #endif

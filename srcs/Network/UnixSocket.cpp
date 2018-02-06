@@ -23,7 +23,7 @@ UnixSocket::~UnixSocket() {
 }
 
 bool UnixSocket::bind(const std::string &addr, const std::string &port) {
-    this->bind(addr, std::stoi(port));
+    return (this->bind(addr, std::stoi(port)));
 }
 
 bool UnixSocket::bind(const std::string &addr, int port) {

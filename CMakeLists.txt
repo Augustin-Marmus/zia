@@ -25,12 +25,14 @@ add_executable(zia
 		srcs/Core/ThreadPool.cpp)
 endif (UNIX)
 
-if (WINDOW)
+if (WIN32)
 	add_executable(zia
 			# CLion Project Includes
 			include/Core/Pipeline.hpp
 			include/Core/ModuleLoader.hpp
 			include/Core/ThreadPool.hpp
+			include/Core/IModuleLoader.hpp
+			include/Core/WinModuleLoader.hpp
 
 			sza/api/http.h
 			sza/api/net.h
@@ -41,29 +43,39 @@ if (WINDOW)
 			srcs/main.cpp
 			srcs/Core/WinModuleLoader.cpp
 			srcs/Core/ThreadPool.cpp)
-endif (WINDOW)
+endif (WIN32)
 
 if (UNIX)
 	add_library(zia-network SHARED
 			include/Network/Socket.hpp
+			include/Network/ISocket.hpp
 			include/Network/Network.hpp
+			include/Network/UnixSocket.hpp
 
 			srcs/Network/UnixSocket.cpp
 			srcs/Network/Loader.cpp
 			srcs/Network/Network.cpp)
 endif (UNIX)
 
-if (WINDOW)
-	add_library(zia-network SHARED
+if (WIN32)
+	add_library(zia-network SHARED	
 			include/Network/Socket.hpp
+			include/Network/ISocket.hpp
+			include/Network/WinSocket.hpp
 			include/Network/Network.hpp
 
 			srcs/Network/Loader.cpp
-			srcs/Network/Network.cpp)
-endif (WINDOW)
+			srcs/Network/Network.cpp
+			srcs/Network/WinSocket.cpp)
+endif (WIN32)
 
 if (UNIX)
 	target_link_libraries(zia dl pthread)
 	target_link_libraries(zia-network pthread)
 	set (CMAKE_CXX_FLAGS "-std=c++17 -ggdb3")
 endif(UNIX)
+
+if (WIN32)
+	target_link_libraries(zia Kernel32)
+	target_link_libraries(zia-network Ws2_32)
+endif(WIN32)

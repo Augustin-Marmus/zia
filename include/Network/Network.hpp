@@ -10,6 +10,7 @@
 #include <list>
 #include <memory>
 #include <thread>
+#include <iostream>
 
 class Network : public zia::api::Net {
 public:

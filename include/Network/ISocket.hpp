@@ -7,7 +7,7 @@
 
 #include "api/net.h"
 
-class zia::api::ImplSocket {};
+struct zia::api::ImplSocket {};
 
 class ISocket : public zia::api::ImplSocket {
 public:

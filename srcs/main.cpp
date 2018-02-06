@@ -41,14 +41,19 @@ int main(int ac, char **av) {
             }
         }
 
-        moduleLoader->loadLibrary(std::string("./"), std::string("zia-network"));
+        moduleLoader->loadLibrary(std::string(".\\"), std::string("zia-network"));
         std::unique_ptr<zia::api::Net> net(moduleLoader->loadNetwork());
-
+	
         if (net && net->config(conf) && net->run(pipeline.getCallback())) {
+			std::cout << "Running for 120 seconds" << std::endl;
             std::chrono::seconds s(120);
             std::this_thread::sleep_for(s);
             net->stop();
         }
+
+
+		std::chrono::seconds s(5);
+		std::this_thread::sleep_for(s);
 //        net.reset(moduleLoader->loadNetwork());
 //       if (net->config(conf) && net->run(pipeline)) {
 //            std::chrono::seconds s(5);
