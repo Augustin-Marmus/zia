@@ -42,6 +42,10 @@ if (WIN32)
             ${CMAKE_CURRENT_LIST_DIR}/srcs/ThreadPool.cpp)
 endif (WIN32)
 
+add_executable(testCompilationBoost ${CMAKE_CURRENT_LIST_DIR}/tests/testBoostCompilation.cpp)
+target_link_libraries(testCompilationBoost ${Boost_LIBRARIES})
+add_test(TestBoost testCompilationBoost)
+
 if (UNIX)
     target_link_libraries(zia dl pthread)
 endif(UNIX)
