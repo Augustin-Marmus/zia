@@ -38,6 +38,7 @@ zia::api::Module* UnixModuleLoader::loadModule(const std::string &moduleName) {
 bool UnixModuleLoader::unloadModule() {
     dlclose(this->handler);
     this->handler = nullptr;
+    return (true);
 }
 
 zia::api::Net* UnixModuleLoader::loadNetwork() {

@@ -13,7 +13,7 @@ using Socket = UnixSocket;
 #endif
 #ifdef _WIN32
 
-#include <Netwok/WinSocket.hpp>
+#include <Network/WinSocket.hpp>
 using Socket = WinSocket;
 
 #endif

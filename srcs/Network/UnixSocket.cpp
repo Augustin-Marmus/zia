@@ -8,6 +8,7 @@ UnixSocket::UnixSocket() {
     struct protoent *proto;
 
     this->opened = false;
+    this->netInfo.sock = this;
     if (!(proto = ::getprotobyname("TCP"))) {
         std::cerr << "Failed to find TCP protocol" << std::endl;
     } else {
@@ -22,7 +23,7 @@ UnixSocket::~UnixSocket() {
 }
 
 bool UnixSocket::bind(const std::string &addr, const std::string &port) {
-    this->bind(addr, std::stoi(port));
+    return (this->bind(addr, std::stoi(port)));
 }
 
 bool UnixSocket::bind(const std::string &addr, int port) {
@@ -34,11 +35,15 @@ bool UnixSocket::bind(const std::string &addr, int port) {
         perror("bind");
         return (false);
     }
+    this->netInfo.port = port;
+    this->netInfo.ip.i = this->addr.sin_addr.s_addr;
+    this->netInfo.ip.str = ::inet_ntoa(this->addr.sin_addr);
     return (true);
 }
 
 bool UnixSocket::listen() {
     this->opened = true;
+    this->netInfo.time = std::chrono::system_clock::now();
     return (!::listen(this->socket, UnixSocket::MAXQUEUE));
 }
 
@@ -50,6 +55,10 @@ bool UnixSocket::accept(ISocket &socket) {
             std::cerr << "Fail to accept " << inet_ntoa(unixSocket->addr.sin_addr) << std::endl;
             return (false);
         }
+        unixSocket->netInfo.ip.i = unixSocket->addr.sin_addr.s_addr;
+        unixSocket->netInfo.ip.str = ::inet_ntoa(unixSocket->addr.sin_addr);
+        unixSocket->netInfo.port = this->netInfo.port;
+        unixSocket->netInfo.time = std::chrono::system_clock::now();
         unixSocket->opened = true;
         return (true);
     }
@@ -75,17 +84,14 @@ int UnixSocket::recv(std::string &buff) {
     return (res);
 }
 
-std::ostream&    operator<<(std::ostream& out, const ISocket& sock)
-{
-    auto socket = dynamic_cast<const UnixSocket *>(&sock);
-    out << "[" << inet_ntoa(socket->addr.sin_addr) << "]";
-    return (out);
-}
-
 int UnixSocket::getSocket() const {
     return {this->socket};
 }
 
 bool UnixSocket::isOpen() const {
     return this->opened;
+}
+
+const zia::api::NetInfo &UnixSocket::getInfo() const {
+    return (this->netInfo);
 }

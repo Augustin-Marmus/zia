@@ -29,14 +29,16 @@ bool Network::run(zia::api::Net::Callback cb) {
 
     this->listener->listen();
     this->callback = cb;
-    //TODO segfault ici
     this->thread = std::make_unique<std::thread>(networkRoutine, this);
     return (true);
 }
 
 bool Network::stop() {
     std::cout << "Stopping Network class" << std::endl;
-    this->listener->close();
+    {
+        std::unique_lock<std::mutex> lock(this->locker);
+        this->listener->close();
+    }
     if (this->thread) {
         this->thread->join();
         this->thread.reset();
@@ -72,13 +74,18 @@ void networkRoutine(Network* net) {
     while (net->listener->isOpen()) {
         time = {1, 0};
         if (::select(net->setFdsSet(), &net->fdsSet, nullptr, nullptr, &time) >= 0) {
+            std::unique_lock<std::mutex>    lock(net->locker);
             for (auto connexion : net->sockets) {
                 if (FD_ISSET(connexion->getSocket(), &net->fdsSet)) {
                     std::string msg;
                     connexion->recv(msg);
                     if (!msg.empty()) {
-                        std::cout << "[" << net->sockets.size() << "]" << *connexion << " : " << msg << std::flush;
-                        connexion->send(msg);
+                        zia::api::Net::Raw raw;
+                        for (auto c : msg) {
+                            raw.push_back(static_cast<std::byte>(c));
+                        }
+                        net->callback(raw, connexion->getInfo());
+                        connexion->send(msg + "\r\n");
                     } else {
                         connexion->close();
                     }

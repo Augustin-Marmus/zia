@@ -5,8 +5,22 @@
 #include <Network/Network.hpp>
 #include <iostream>
 
+#ifdef __unix__
+
 extern "C" {
-    zia::api::Net*      getNetwork() {
-        return (new Network());
-    }
+	zia::api::Net* getNetwork() {
+		return (new Network);
+	}
 }
+
+#endif // __unix__
+
+#ifdef WIN32
+
+extern "C" {
+	__declspec(dllexport) zia::api::Net* __cdecl getNetwork() {
+		return (new Network);
+	}
+}
+
+#endif //WIN32

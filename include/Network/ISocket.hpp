@@ -7,9 +7,9 @@
 
 #include "api/net.h"
 
-//class zia::api::ImplSocket {};
+struct zia::api::ImplSocket {};
 
-class ISocket /*: public zia::api::ImplSocket */{
+class ISocket : public zia::api::ImplSocket {
 public:
     virtual bool            bind(const std::string& addr, const std::string& port) = 0;
     virtual bool            bind(const std::string& addr, int port) = 0;
@@ -21,8 +21,8 @@ public:
     virtual int             recv(std::string& buff) = 0;
     virtual int             getSocket() const = 0;
     virtual bool            isOpen() const = 0;
+    virtual const zia::api::NetInfo&    getInfo() const = 0;
 };
-
-class zia::api::ImplSocket : public ISocket {};
+//class zia::api::ImplSocket : public ISocket {};
 
 #endif //CPP_ZIA_ISOCKET_HPP

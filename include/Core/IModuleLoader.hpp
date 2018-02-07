@@ -8,6 +8,7 @@
 #include <memory>
 #include <string>
 #include <api/module.h>
+#include <api/net.h>
 
 class IModuleLoader {
 public:

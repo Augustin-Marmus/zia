@@ -10,6 +10,8 @@
 #include <list>
 #include <memory>
 #include <thread>
+#include <iostream>
+#include <mutex>
 
 class Network : public zia::api::Net {
 public:
@@ -29,6 +31,7 @@ private:
     std::unique_ptr<ISocket>                listener;
     std::list<std::shared_ptr<ISocket>>     sockets;
     std::unique_ptr<std::thread>            thread;
+    std::mutex                              locker;
 };
 
 void                networkRoutine(Network* net);
