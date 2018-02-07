@@ -2,7 +2,7 @@
 // Created by marmus_a on 27/01/18.
 //
 
-#include "Core/Pipeline.hpp"
+#include "Pipeline.hpp"
 
 Pipeline::Pipeline(int nbWorkers) {
     this->pool = new ThreadPool(nbWorkers);

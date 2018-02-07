@@ -2,7 +2,7 @@
 // Created by marmus_a on 25/01/18.
 //
 
-#include "Network/UnixSocket.hpp"
+#include "UnixSocket.hpp"
 
 UnixSocket::UnixSocket() {
     struct protoent *proto;

@@ -2,7 +2,7 @@
 // Created by marmus_a on 30/01/18.
 //
 
-#include "Network/Network.hpp"
+#include "Network.hpp"
 
 Network::Network() : listener(new Socket), sockets(), thread(nullptr) {
 
