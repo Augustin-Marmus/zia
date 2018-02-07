@@ -5,7 +5,7 @@
 #ifndef CPP_ZIA_NETWORK_HPP
 #define CPP_ZIA_NETWORK_HPP
 
-#include <Network/Socket.hpp>
+#include "Socket.hpp"
 #include <api/net.h>
 #include <list>
 #include <memory>

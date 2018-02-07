@@ -2,7 +2,7 @@
 // Created by marmus_a on 25/01/18.
 //
 
-#include "Network/WinSocket.hpp"
+#include "WinSocket.hpp"
 
 WinSocket::WinSocket()
 {

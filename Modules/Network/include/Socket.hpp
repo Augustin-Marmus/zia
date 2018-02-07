@@ -7,13 +7,13 @@
 
 #ifdef __unix__
 
-#include <Network/UnixSocket.hpp>
+#include "UnixSocket.hpp"
 using Socket = UnixSocket;
 
 #endif
 #ifdef _WIN32
 
-#include <Network/WinSocket.hpp>
+#include "WinSocket.hpp"
 using Socket = WinSocket;
 
 #endif

@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "Core/ThreadPool.hpp"
+#include "ThreadPool.hpp"
 
 ThreadPool::ThreadPool(int nbThread) : stop(false) {
     for (auto cpt = 0; cpt < nbThread; cpt++) {

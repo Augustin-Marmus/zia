@@ -8,7 +8,6 @@
 
 #include <memory>
 #include <Windows.h>
-//#include <Winbase.h>
 #include "IModuleLoader.hpp"
 
 class WinModuleLoader : public IModuleLoader {

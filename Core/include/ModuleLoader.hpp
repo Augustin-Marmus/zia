@@ -7,13 +7,13 @@
 
 #ifdef __unix__
 
-#include <Core/UnixModuleLoader.hpp>
+#include "UnixModuleLoader.hpp"
 using ModuleLoader = UnixModuleLoader;
 
 #endif
 #ifdef _WIN32
 
-#include <Core/WinModuleLoader.hpp>
+#include "WinModuleLoader.hpp"
 using ModuleLoader = WinModuleLoader;
 
 #endif

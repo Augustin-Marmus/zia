@@ -2,8 +2,7 @@
 // Created by marmus_a on 29/01/18.
 //
 
-#include <Network/Network.hpp>
-#include <iostream>
+#include "Network.hpp"
 
 #ifdef __unix__
 

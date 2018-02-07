@@ -4,7 +4,7 @@
 
 #pragma once
 #include <iostream>
-#include "Core/WinModuleLoader.hpp"
+#include "WinModuleLoader.hpp"
 
 WinModuleLoader::WinModuleLoader()
 {

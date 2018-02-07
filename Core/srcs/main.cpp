@@ -4,9 +4,9 @@
 
 #include <iostream>
 #include <memory>
-#include <Core/Pipeline.hpp>
-#include <Core/ModuleLoader.hpp>
 #include <thread>
+#include "Pipeline.hpp"
+#include "ModuleLoader.hpp"
 
 int main(int ac, char **av) {
     if (ac > 1) {
