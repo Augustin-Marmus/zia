@@ -35,7 +35,10 @@ bool Network::run(zia::api::Net::Callback cb) {
 
 bool Network::stop() {
     std::cout << "Stopping Network class" << std::endl;
-    this->listener->close();
+    {
+        std::unique_lock<std::mutex> lock(this->locker);
+        this->listener->close();
+    }
     if (this->thread) {
         this->thread->join();
         this->thread.reset();
@@ -71,6 +74,7 @@ void networkRoutine(Network* net) {
     while (net->listener->isOpen()) {
         time = {1, 0};
         if (::select(net->setFdsSet(), &net->fdsSet, nullptr, nullptr, &time) >= 0) {
+            std::unique_lock<std::mutex>    lock(net->locker);
             for (auto connexion : net->sockets) {
                 if (FD_ISSET(connexion->getSocket(), &net->fdsSet)) {
                     std::string msg;

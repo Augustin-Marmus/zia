@@ -40,8 +40,12 @@ int main(int ac, char **av) {
                 std::cout << err.what() << std::endl;
             }
         }
-
+#ifdef __unix__
+        moduleLoader->loadLibrary(std::string("./"), std::string("zia-network"));
+#endif //__unix__
+#ifdef WIN32
         moduleLoader->loadLibrary(std::string(".\\"), std::string("zia-network"));
+#endif //WIN32
         std::unique_ptr<zia::api::Net> net(moduleLoader->loadNetwork());
 	
         if (net && net->config(conf) && net->run(pipeline.getCallback())) {
