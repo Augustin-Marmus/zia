@@ -5,6 +5,7 @@
 #include <iostream>
 #include <memory>
 #include <thread>
+#include <FileWatcher.hpp>
 #include "Pipeline.hpp"
 #include "ModuleLoader.hpp"
 
@@ -46,15 +47,15 @@ int main(int ac, char **av) {
 #ifdef WIN32
         moduleLoader->loadLibrary(std::string(".\\"), std::string("zia-network"));
 #endif //WIN32
-        std::unique_ptr<zia::api::Net> net(moduleLoader->loadNetwork());
-	
-        if (net && net->config(conf) && net->run(pipeline.getCallback())) {
-			std::cout << "Running for 120 seconds" << std::endl;
-            std::chrono::seconds s(120);
-            std::this_thread::sleep_for(s);
-            net->stop();
-        }
 
+        while (true) {
+            std::unique_ptr<zia::api::Net> net(moduleLoader->loadNetwork());
+
+            if (net && net->config(conf) && net->run(pipeline.getCallback())) {
+                FileWatcher(av[1]).waitForModification();
+                net->stop();
+            }
+        }
 
 		std::chrono::seconds s(5);
 		std::this_thread::sleep_for(s);
