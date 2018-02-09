@@ -5,6 +5,8 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 if (UNIX)
     add_executable(zia
             # CLion Project Includes
+            ${CMAKE_CURRENT_LIST_DIR}/include/Core.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/include/Server.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/Pipeline.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/ThreadPool.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/ModuleLoader.hpp
@@ -19,6 +21,8 @@ if (UNIX)
             sza/api/conf.h
             sza/api/module.h
 
+            ${CMAKE_CURRENT_LIST_DIR}/srcs/Core.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/srcs/Server.cpp
             ${CMAKE_CURRENT_LIST_DIR}/srcs/Pipeline.cpp
             ${CMAKE_CURRENT_LIST_DIR}/srcs/main.cpp
             ${CMAKE_CURRENT_LIST_DIR}/srcs/UnixModuleLoader.cpp

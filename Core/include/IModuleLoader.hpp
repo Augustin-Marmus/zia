@@ -13,9 +13,9 @@
 class IModuleLoader {
 public:
     virtual bool                                    loadLibrary(const std::string& path, const std::string& file) = 0;
-    virtual zia::api::Module*                       loadModule(const std::string& moduleName) = 0;
+    virtual zia::api::Module*                       loadModule() = 0;
     virtual zia::api::Net*                          loadNetwork() = 0;
-    virtual bool                                    unloadModule() = 0;
+    virtual bool                                    unloadLibrary() = 0;
 };
 
 #endif //CPP_ZIA_IMODULELOADER_HPP

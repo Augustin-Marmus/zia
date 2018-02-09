@@ -19,15 +19,15 @@ UnixModuleLoader::~UnixModuleLoader() {
 bool UnixModuleLoader::loadLibrary(const std::string& path, const std::string &file) {
     std::cout << "Loading: " << "lib" + file + ".so" << std::endl;
     if (this->handler) {
-        unloadModule();
+        unloadLibrary();
     }
     return (!!(this->handler = dlopen((path + "lib" + file + ".so").c_str(), RTLD_LAZY)));
 }
 
-zia::api::Module* UnixModuleLoader::loadModule(const std::string &moduleName) {
+zia::api::Module* UnixModuleLoader::loadModule() {
     zia::api::Module*   (*ptr)();
 
-    ptr = reinterpret_cast<zia::api::Module*(*)()>(dlsym(this->handler, (std::string("get") + moduleName).c_str()));
+    ptr = reinterpret_cast<zia::api::Module*(*)()>(dlsym(this->handler, "create"));
     if (ptr) {
         return (ptr());
     } else {
@@ -35,16 +35,19 @@ zia::api::Module* UnixModuleLoader::loadModule(const std::string &moduleName) {
     }
 }
 
-bool UnixModuleLoader::unloadModule() {
-    dlclose(this->handler);
-    this->handler = nullptr;
-    return (true);
+bool UnixModuleLoader::unloadLibrary() {
+    if (this->handler) {
+        dlclose(this->handler);
+        this->handler = nullptr;
+        return (true);
+    }
+    return (false);
 }
 
 zia::api::Net* UnixModuleLoader::loadNetwork() {
     zia::api::Net*   (*ptr)();
 
-    ptr = reinterpret_cast<zia::api::Net*(*)()>(dlsym(this->handler, "getNetwork"));
+    ptr = reinterpret_cast<zia::api::Net*(*)()>(dlsym(this->handler, "create"));
     if (ptr) {
         return (ptr());
     } else {

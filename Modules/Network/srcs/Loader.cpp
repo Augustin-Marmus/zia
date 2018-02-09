@@ -7,7 +7,7 @@
 #ifdef __unix__
 
 extern "C" {
-	zia::api::Net* getNetwork() {
+	zia::api::Net* create() {
 		return (new Network);
 	}
 }
@@ -17,7 +17,7 @@ extern "C" {
 #ifdef WIN32
 
 extern "C" {
-	__declspec(dllexport) zia::api::Net* __cdecl getNetwork() {
+	__declspec(dllexport) zia::api::Net* __cdecl create() {
 		return (new Network);
 	}
 }
