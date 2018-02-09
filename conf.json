@@ -1,4 +1,7 @@
 {
+  "Core" : {
+    "threads" : 4
+  },
   "Net" : {
     "name" : "network",
     "lib" : "zia-network",

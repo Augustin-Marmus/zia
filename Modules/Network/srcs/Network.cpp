@@ -85,7 +85,7 @@ void networkRoutine(Network* net) {
                             raw.push_back(static_cast<std::byte>(c));
                         }
                         net->callback(raw, connexion->getInfo());
-                        connexion->send(msg + "\r\n");
+                        connexion->send(msg);
                     } else {
                         connexion->close();
                     }

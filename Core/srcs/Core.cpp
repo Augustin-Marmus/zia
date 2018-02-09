@@ -17,17 +17,18 @@ Core::~Core() {
 }
 
 bool Core::run(const zia::api::Conf& config) {
-    if (!this->config(config)) {
+    if (!this->config(config) || !this->pipeline) {
         std::cerr << "Failed to configure Core" << std::endl;
         return (false);
     }
-    this->net->run(this->pipeline.getCallback());
+    return (this->net->run(this->pipeline->getCallback()));
 }
 
 bool Core::config(const zia::api::Conf& config) {
+    this->pipeline = std::make_shared<Pipeline>(4/* get Conf nbWorkers*/);
     this->moduleLoader.loadLibrary("./", "zia-network");
     this->net.reset(this->moduleLoader.loadNetwork());
-    if (!(this->net && this->net->config(config))) {
+    if (!this->net || !this->net->config(config)) {
         return (false);
     }
 
