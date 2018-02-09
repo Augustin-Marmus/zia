@@ -16,7 +16,7 @@ public:
     const static size_t BUFFLEN = (10 * (sizeof(struct inotify_event) + NAME_MAX + 1));
     UnixFileWatcher(const std::string& fileToWatch);
     virtual ~UnixFileWatcher();
-    virtual void        waitForModification();
+    virtual bool        waitForModification();
 private:
     UnixFileWatcher();
 

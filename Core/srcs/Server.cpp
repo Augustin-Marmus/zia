@@ -24,13 +24,16 @@ bool Server::reloadConfig() {
     conf["modulesPath"].v = std::string("./lib/");
 
     this->config = conf;
+	return (true);
 }
 
 bool Server::run() {
     while (this->reloadConfig()) {
         FileWatcher watcher(this->configFile);
         this->core = std::make_unique<Core>();
-        this->core->run(this->config);
+		if (!this->core->run(this->config)) {
+			return (false);
+		}
         watcher.waitForModification();
         this->core->stop();
     }

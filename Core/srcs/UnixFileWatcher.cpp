@@ -24,8 +24,11 @@ UnixFileWatcher::~UnixFileWatcher() {
     ::close(this->inotifyDescriptor);
 }
 
-void UnixFileWatcher::waitForModification() {
+bool UnixFileWatcher::waitForModification() {
     char buff[this->BUFFLEN];
 
-    read(this->inotifyDescriptor, buff, this->BUFFLEN);
+	if (read(this->inotifyDescriptor, buff, this->BUFFLEN) <= 0) {
+		return (false);
+	}
+	return (true);
 }

@@ -9,7 +9,7 @@
 
 class IFileWatcher {
 public:
-    virtual void        waitForModification() = 0;
+    virtual bool        waitForModification() = 0;
 };
 
 #endif //CPP_ZIA_IFILEWATCHER_HPP

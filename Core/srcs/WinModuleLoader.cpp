@@ -27,7 +27,7 @@ bool WinModuleLoader::loadLibrary(const std::string & path, const std::string & 
 	return (!!(this->handler = LoadLibrary(TEXT((path + file + ".dll").c_str()))));
 }
 
-zia::api::Module * WinModuleLoader::loadModule(const std::string & moduleName)
+zia::api::Module * WinModuleLoader::loadModule()
 {
 	zia::api::Module*		(*ptr)();
 

@@ -17,7 +17,7 @@ public:
     bool        reloadConfig();
     bool        run();
 private:
-    Server() = default;
+	Server() {}
 
     zia::api::Conf              config;
     std::string                 configFile;

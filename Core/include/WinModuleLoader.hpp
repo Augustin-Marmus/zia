@@ -15,7 +15,7 @@ public:
 	WinModuleLoader();
 	~WinModuleLoader();
 	virtual bool                                    loadLibrary(const std::string& path, const std::string& file);
-	virtual zia::api::Module*                       loadModule(const std::string& moduleName);
+	virtual zia::api::Module*                       loadModule();
 	virtual zia::api::Net*                          loadNetwork();
 	virtual bool                                    unloadLibrary();
 
