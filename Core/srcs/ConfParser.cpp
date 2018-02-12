@@ -31,7 +31,6 @@ std::string ConfParser::getKey(std::string elem)
 
 	key = elem.insert(0, "\"");
 	key = utils.extract(key, "\"", ":");
-	std::cout << "-->" << key << "<--" << std::endl;
 	key.erase(key.find("\""), key.find("\"")+1);
 	key.erase(key.find("\""), key.find("\"")+1);
 	return key;
@@ -44,7 +43,6 @@ std::pair<std::string, zia::api::ConfValue> ConfParser::getPair(std::string elem
 	std::string value;
 
 	key = getKey(elem);
-	std::cout << "-->" << key << "<--" << std::endl;
 	elemConf.first = key;
 	value = elem;
 	value.erase(0, elem.find(":"));
@@ -53,7 +51,6 @@ std::pair<std::string, zia::api::ConfValue> ConfParser::getPair(std::string elem
 		elem = value.erase(0, 1);
 	if (elem.find('\"') != elem.npos)
 		elem.erase(elem.find('\"'));
-	std::cout << elem << std::endl;
 	elemConf.second.v = elem;
 	return elemConf;
 }
@@ -143,15 +140,7 @@ std::pair<std::string, zia::api::ConfValue> ConfParser::ParseFirstBloc()
 		Content.erase(Content.find("\""), Content.find(":") - 1);
 		Frame.erase(0, 1);
 		Frame = Frame.erase(Frame.length() - 1, Frame.length());
-		std::cout << "FRAME-->" << Frame << std::endl;
 		elem.second.v = toConfObj(utils.ClearIt(Frame));
-
-		/////////////////////////////////////////////////////////////////////////////////////////////
-		test = std::get<zia::api::ConfObject>(elem.second.v);
-		std::string ole = std::get<std::string>(test.at("titi").v);
-		std::cout << ole << std::endl;
-		/////////////////////////////////////////////////////////////////////////////////////////////
-
 	} else {
 		Frame = utils.getFragment(Content, "[", "]");
 		key = utils.extract(Content, "\"", ":");
@@ -160,7 +149,6 @@ std::pair<std::string, zia::api::ConfValue> ConfParser::ParseFirstBloc()
 		Content.erase(Content.find("\""), Content.find(":") - 1);
 		Content.insert(0, "[");
 		Content.erase(Content.find("["), utils.getEnd(Content, "[", "]"));
-		std::cout << "FRAME-->" << Frame << std::endl;
 		elem.second.v = toConfArray(utils.ClearIt(Frame));
 	}
 	return elem;
