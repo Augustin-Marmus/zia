@@ -4,7 +4,7 @@
 
 #include "ConfParser.hpp"
 
-ConfParser::ConfParser(const std::string FileName) {
+ConfParser::ConfParser(const std::string& FileName) {
     this->FileName = FileName;
 
     std::string line;
@@ -166,7 +166,7 @@ std::pair<std::string, zia::api::ConfValue> ConfParser::ParseFirstBloc()
 	return elem;
 }
 
-zia::api::ConfObject *ConfParser::Parse()
+zia::api::ConfObject *ConfParser::parse()
 {
 	zia::api::ConfObject *All = new zia::api::ConfObject();
 
