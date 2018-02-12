@@ -17,9 +17,9 @@
 class ConfParser {
 
 public:
-	ConfParser(const std::string);
+	ConfParser(const std::string&);
 	~ConfParser();
-	zia::api::ConfObject *Parse();
+	zia::api::ConfObject *parse();
 	zia::api::ConfObject toConfObj(std::string All);
 	zia::api::ConfArray toConfArray(std::string All);
 	std::pair<std::string, zia::api::ConfValue> ParseFirstBloc();

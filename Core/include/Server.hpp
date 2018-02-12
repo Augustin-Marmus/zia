@@ -8,6 +8,7 @@
 
 #include <string>
 #include "Core.hpp"
+#include "ConfParser.hpp"
 
 class Server {
 public:
@@ -19,9 +20,9 @@ public:
 private:
 	Server() {}
 
-    zia::api::Conf              config;
-    std::string                 configFile;
-    std::unique_ptr<Core>       core;
+    std::unique_ptr<zia::api::Conf>		config;
+    std::string                 		configFile;
+    std::unique_ptr<Core> 	      		core;
 };
 
 
