@@ -1,0 +1,1 @@
+/usr/bin/g++-7 -fPIC -std=c++17 -g  -shared -Wl,-soname,libzia-cgi.so -o bin/libzia-cgi.so CMakeFiles/zia-cgi.dir/Modules/Cgi/srcs/Cgi.cpp.o CMakeFiles/zia-cgi.dir/Modules/Cgi/srcs/Loader.cpp.o -lpthread 
