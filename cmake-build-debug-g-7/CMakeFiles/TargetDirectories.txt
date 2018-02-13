@@ -1,8 +1,0 @@
-/home/louis/tek3/cpp_zia/cmake-build-debug-g-7/CMakeFiles/rebuild_cache.dir
-/home/louis/tek3/cpp_zia/cmake-build-debug-g-7/CMakeFiles/edit_cache.dir
-/home/louis/tek3/cpp_zia/cmake-build-debug-g-7/CMakeFiles/test.dir
-/home/louis/tek3/cpp_zia/cmake-build-debug-g-7/CMakeFiles/testCompilationBoost.dir
-/home/louis/tek3/cpp_zia/cmake-build-debug-g-7/CMakeFiles/zia.dir
-/home/louis/tek3/cpp_zia/cmake-build-debug-g-7/CMakeFiles/testCompilationBoostCgi.dir
-/home/louis/tek3/cpp_zia/cmake-build-debug-g-7/CMakeFiles/zia-cgi.dir
-/home/louis/tek3/cpp_zia/cmake-build-debug-g-7/CMakeFiles/zia-network.dir
