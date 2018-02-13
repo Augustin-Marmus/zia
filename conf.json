@@ -19,7 +19,6 @@
         "mode" : "example",
         "test" : "voila",
         "tet" : 4
-        //ajouter autant de champs de conf que l'on veut
       }
     },
     {
