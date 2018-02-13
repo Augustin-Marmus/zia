@@ -19,7 +19,8 @@ UnixModuleLoader::~UnixModuleLoader() {
 bool UnixModuleLoader::loadLibrary(const std::string& path, const std::string &file) {
     std::cout << "Loading: " << "lib" + file + ".so" << std::endl;
     if (this->handler) {
-        unloadLibrary();
+        //TODO ProperLibLoader
+        //unloadLibrary();
     }
     return (!!(this->handler = dlopen((path + "lib" + file + ".so").c_str(), RTLD_LAZY)));
 }

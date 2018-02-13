@@ -21,7 +21,7 @@ private:
     bool            config(const zia::api::Conf& config);
 
     std::shared_ptr<Pipeline>       pipeline;
-    std::unique_ptr<zia::api::Net>  net;
+    zia::api::Net*                  net;
     ModuleLoader   moduleLoader;
 };
 
