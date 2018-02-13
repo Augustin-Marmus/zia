@@ -27,7 +27,7 @@ if (UNIX)
             ${CMAKE_CURRENT_LIST_DIR}/srcs/Loader.cpp
 
             ${CMAKE_CURRENT_LIST_DIR}/include/Cgi.hpp
-            ${CMAKE_CURRENT_LIST_DIR}/tests/testBoostCompilation.cpp)
+            ${CMAKE_CURRENT_LIST_DIR}/tests/tests_cgi.cpp)
     target_link_libraries(testCompilationBoostCgi ${Boost_LIBRARIES})
     add_test(TestBoost testCompilationBoostCgi)
 
