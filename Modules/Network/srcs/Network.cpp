@@ -20,7 +20,19 @@ Network::~Network() {
 }
 
 bool Network::config(const zia::api::Conf &conf) {
-    return (this->listener->bind(std::string("0.0.0.0"), 1337));
+    const long long *port;
+    const std::string *ipBinding;
+    if (!(port = std::get_if<long long>(&conf.at("port").v))) {
+        std::cerr << "Error: Missing port field in Net configuration" << std::endl;
+        return (false);
+    }
+    if (!(ipBinding = std::get_if<std::string>(&conf.at("ip_binding").v))) {
+        std::cerr << "Error: Missing ip_binding field in Net configuration" << std::endl;
+        return (false);
+    }
+
+    std::cout << port << std::endl;
+    return (this->listener->bind(std::string("0.0.0.0"), static_cast<int>(*port)));
 }
 
 bool Network::run(zia::api::Net::Callback cb) {
