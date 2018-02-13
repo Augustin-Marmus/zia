@@ -43,9 +43,9 @@ const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::
     struct stat  st;
 
     //TODO: find values in server's config
-    env["DOCUMENT_ROOT"] = "/home/louis/tek3/cpp_zia";
+    env["DOCUMENT_ROOT"] = "/home/louis/tek3/cpp_zia/Modules/cgi";
     env["SERVER_NAME"] = "127.0.0.1";
-        env["SERVER_PROTOCOL"] = "HTTP/1.1";
+    env["SERVER_PROTOCOL"] = "HTTP/1.1";
     env["SERVER_PORT"] = "80";
     env["SERVER_ADDR"] = "127.0.0.1";
     env["SERVER_SOFTWARE"] = "zia-redteam1.1";
