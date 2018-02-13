@@ -25,6 +25,7 @@ public:
 	std::pair<std::string, zia::api::ConfValue> ParseFirstBloc();
 	std::pair<std::string, zia::api::ConfValue> getPair(std::string elem);
 	std::string getKey(std::string elem);
+	std::pair<std::string, zia::api::ConfValue> getValueType(std::pair<std::string, zia::api::ConfValue> elemConf, std::string elem);
 
 private:
     std::string FileName;

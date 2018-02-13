@@ -36,6 +36,31 @@ std::string ConfParser::getKey(std::string elem)
 	return key;
 }
 
+std::pair<std::string, zia::api::ConfValue> ConfParser::getValueType(std::pair<std::string, zia::api::ConfValue> elemConf, std::string elem)
+{
+	size_t sz = 0;
+	bool bb;
+	double dd;
+	long long ll;
+
+	if (elem.find(".") != elem.npos)
+	{
+		dd = std::stod (elem,&sz);
+		elemConf.second.v = dd;
+	}
+	else if (elem.find("e") != elem.npos)
+	{
+		bb = (elem.find("false") == elem.npos) ? true : false;
+		elemConf.second.v = bb;
+	}
+	else
+	{
+		ll = std::stoll(elem, &sz, 0);
+		elemConf.second.v = ll;
+	}
+	return elemConf;
+}
+
 std::pair<std::string, zia::api::ConfValue> ConfParser::getPair(std::string elem)
 {
 	std::pair<std::string, zia::api::ConfValue> elemConf;
@@ -51,6 +76,8 @@ std::pair<std::string, zia::api::ConfValue> ConfParser::getPair(std::string elem
 		elem = value.erase(0, 1);
 	if (elem.find('\"') != elem.npos)
 		elem.erase(elem.find('\"'));
+	else
+		return getValueType(elemConf, elem);
 	elemConf.second.v = elem;
 	return elemConf;
 }
@@ -93,6 +120,7 @@ zia::api::ConfObject ConfParser::toConfObj(std::string All)
 				tmp = utils.extract(All, "\"", "\0");
 			tmp.insert(0, "\"");
 			All.erase(All.find(tmp), All.find(tmp)+tmp.length());
+
 			if (All[0] == ',')
 				All.erase(0, 1);
 			elem = getPair(tmp);
@@ -108,8 +136,10 @@ zia::api::ConfObject ConfParser::toConfObj(std::string All)
 		}
 		else {
 			key = All.substr(All.find("\""), All.find(":")+1);
-			tmp = utils.getFragment(All, "{", "}").erase(0, 1).erase(utils.getFragment(All, "{", "}").length()-1);
 			All.erase(All.find(key), All.find(key)+key.length());
+			key = getKey(key);
+
+			tmp = utils.getFragment(All, "{", "}").erase(0, 1).erase(utils.getFragment(All, "{", "}").length()-1);
 			All.erase(All.find(tmp), All.find(tmp)+tmp.length());
 			if (All[1] == ',' && All[0] == '{')
 				All.erase(0, 2);
