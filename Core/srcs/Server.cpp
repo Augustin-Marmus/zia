@@ -19,15 +19,6 @@ bool Server::reloadConfig() {
         std::cerr << err.what() << std::endl;
         return (false);
     }
-    /*zia::api::Conf conf;
-    zia::api::ConfArray tmp;
-    zia::api::ConfArray tmp2;
-    tmp.emplace_back(zia::api::ConfValue());
-    tmp[0].v = std::string("zia-serializer");
-    conf["port"].v = std::string("4242");
-    conf["netModule"].v = std::string("test");
-    conf["modules"].v = tmp;
-    conf["modulesPath"].v = std::string("./lib/");*/
 	return (true);
 }
 

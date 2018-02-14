@@ -13,8 +13,8 @@ Pipeline::~Pipeline() {
     this->pool = nullptr;
 }
 
-void Pipeline::run(zia::api::Net::Raw req, zia::api::NetInfo netInfo) const {
-    this->pool->runAsync([this, req, netInfo] {
+void Pipeline::run(zia::api::Net::Raw req, zia::api::NetInfo netInfo, zia::api::Net& network) const {
+    this->pool->runAsync([this, req, netInfo, &network] {
         zia::api::HttpDuplex httpDuplex;
 
         std::string tmp;
@@ -23,12 +23,16 @@ void Pipeline::run(zia::api::Net::Raw req, zia::api::NetInfo netInfo) const {
         }
         std::cout << "[" << netInfo.ip.str << ":" << netInfo.port << "]: " << tmp << std::flush;
         httpDuplex.raw_req = req;
+        httpDuplex.raw_resp = req;
         for (auto it = this->begin(); it != this->end(); it++) {
-            it->second->exec(httpDuplex);
+            if (!it->second->exec(httpDuplex)) {
+                it = this->end();
+            }
         }
+        network.send(netInfo.sock, httpDuplex.raw_resp);
     });
 }
 
-zia::api::Net::Callback Pipeline::getCallback() const {
-    return ([this](zia::api::Net::Raw req, zia::api::NetInfo netInfo) {this->run(req, netInfo);});
+zia::api::Net::Callback Pipeline::getCallback(zia::api::Net& network) const {
+    return ([this, &network](zia::api::Net::Raw req, zia::api::NetInfo netInfo) {this->run(req, netInfo, network);});
 }

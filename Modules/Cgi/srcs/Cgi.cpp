@@ -112,8 +112,9 @@ const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::
     return mapToTab(env);
 }
 
-bool    Cgi::config(const zia::api::Conf& conf)
-{}
+bool    Cgi::config(const zia::api::Conf& conf) {
+    return (true);
+}
 
 bool    Cgi::handleSon(zia::api::HttpDuplex& http, int fd[2], const char **env)
 {

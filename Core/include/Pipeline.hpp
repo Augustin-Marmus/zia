@@ -15,8 +15,8 @@ public:
     Pipeline(int nbWorker = 4);
     ~Pipeline();
 
-    void                                    run(zia::api::Net::Raw, zia::api::NetInfo) const;
-    zia::api::Net::Callback                 getCallback() const;
+    void                                    run(zia::api::Net::Raw, zia::api::NetInfo, zia::api::Net& network) const;
+    zia::api::Net::Callback                 getCallback(zia::api::Net& network) const;
 private:
     ThreadPool*     pool;
 };

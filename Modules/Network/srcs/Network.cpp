@@ -31,8 +31,7 @@ bool Network::config(const zia::api::Conf &conf) {
         return (false);
     }
 
-    std::cout << port << std::endl;
-    return (this->listener->bind(std::string("0.0.0.0"), static_cast<int>(*port)));
+    return (this->listener->bind(*ipBinding, static_cast<int>(*port)));
 }
 
 bool Network::run(zia::api::Net::Callback cb) {
@@ -97,7 +96,6 @@ void networkRoutine(Network* net) {
                             raw.push_back(static_cast<std::byte>(c));
                         }
                         net->callback(raw, connexion->getInfo());
-                        connexion->send(msg);
                     } else {
                         connexion->close();
                     }
