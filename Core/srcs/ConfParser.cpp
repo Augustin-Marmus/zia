@@ -117,8 +117,6 @@ zia::api::ConfObject ConfParser::toConfObj(std::string All)
 	zia::api::ConfObject res;
 	std::pair<std::string,zia::api::ConfValue> elem;
 
-	zia::api::ConfObject test;
-
 	while (utils.extract(All, "\"", "\0").compare("") != 0)
 	{
 		if (utils.CheckStr(All)) {
@@ -130,7 +128,6 @@ zia::api::ConfObject ConfParser::toConfObj(std::string All)
 
 			if (All[0] == ',')
 				All.erase(0, 1);
-
 			elem = getPair(tmp);
 		}
 		else if (utils.extract(All, "\"", ",").find("[") != All.npos)
@@ -147,7 +144,8 @@ zia::api::ConfObject ConfParser::toConfObj(std::string All)
 			All.erase(All.find(key), All.find(key)+key.length());
 			key = getKey(key);
 
-			tmp = utils.getFragment(All, "{", "}").erase(0, 1).erase(utils.getFragment(All, "{", "}").length()-1);
+			tmp = "";
+
 			All.erase(All.find(tmp), All.find(tmp)+tmp.length());
 			if (All[1] == ',' && All[0] == '{')
 				All.erase(0, 2);
@@ -155,6 +153,7 @@ zia::api::ConfObject ConfParser::toConfObj(std::string All)
 				All.erase(0, 1);
 				All.erase(All.length()-1);
 			}
+
 			elem.first = key;
 			elem.second.v = toConfObj(All);
 		}

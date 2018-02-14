@@ -41,7 +41,12 @@ std::string ParserUtils::getFragment(std::string all, std::string begin, std::st
 		else if (all[c] == begin[0])
 			cmp++;
 		if (cmp == 0)
-			finder = true;
+		{
+			Frag.append(tmp);
+			return Frag;
+		}
+		if (all[c+1] == '\0')
+			return Frag;
 		Frag.append(tmp);
 		c++;
 	}
