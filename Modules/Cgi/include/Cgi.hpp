@@ -27,7 +27,7 @@ private:
     bool            handleFather(int fd[2], pid_t pid, zia::api::HttpDuplex& http);
     bool            handleSon(zia::api::HttpDuplex& http, int fd[2], const char **env);
     bool            checkFile(const std::string& uri);
-    void            sendResponse(std::string body);
+    void            sendResponse(std::string body, zia::api::HttpDuplex& http);
 };
 
 #endif              //CPP_ZIA_CGI_HPP

@@ -27,6 +27,7 @@ void Pipeline::run(zia::api::Net::Raw req, zia::api::NetInfo netInfo, zia::api::
         for (auto it = this->begin(); it != this->end(); it++) {
             if (!it->second->exec(httpDuplex)) {
                 it = this->end();
+                break;
             }
         }
         network.send(netInfo.sock, httpDuplex.raw_resp);
