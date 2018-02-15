@@ -42,7 +42,12 @@ const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::
     std::string query, uri, script, cgiDir, cgiRealDir;
     struct stat  st;
 
-
+    std::cout << "-----------------------------------" << std::endl;
+    std::cout << req.uri << std::endl;
+    for (auto it: req.headers){
+        std::cout << it.first << "\t" << it.second << std::endl;
+    }
+    std::cout << "-----------------------------------" << std::endl;
     //TODO: find values in server's config
     env["DOCUMENT_ROOT"] = _conf["DOCUMENT_ROOT"];
     env["SERVER_NAME"] = _conf["SERVER_IP"];
@@ -96,8 +101,6 @@ const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::
     }
 
     env["SCRIPT_FILENAME"] = env["DOCUMENT_ROOT"] + cgiDir + script;
-    std::cout <<env["SCRIPT_FILENAME"] << std::endl;
-
     if (stat(env["SCRIPT_FILENAME"].c_str(), &st) < 0) {
         // 404 not found
         return nullptr;
@@ -112,9 +115,7 @@ const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::
     env["REMOTE_ADDR"] = net.ip.str;
     env["REMOTE_PORT"] = std::to_string(net.port);
     env["REDIRECT_STATUS"] = "true";
-    /*for (auto it: env){
-        std::cout << it.first << " " << it.second << std::endl;
-    }*/
+
     return mapToTab(env);
 }
 
@@ -124,7 +125,6 @@ const std::string     *Cgi::getValueByKey(const std::string& key, const zia::api
         std::cerr << "Error: Missing field name in a Module" << std::endl;
         return (nullptr);
     }
-    std::cout << *value << std::endl;
     return (value);
 }
 
@@ -149,9 +149,6 @@ bool    Cgi::handleSon(zia::api::HttpDuplex& http, int fd[2], const char **env)
             strdup(bin.c_str()),
             NULL
     };
-    for (int j = 0; env[j] != NULL; j++) {
-        std::cout << env[j] << std::endl;
-    }
     //close(http.info.sock->getSocket());
     close(fd[0]);
     dup2(fd[1], 1);
@@ -201,7 +198,6 @@ bool    Cgi::handleFather(int fd[2], pid_t pid, zia::api::HttpDuplex& http)
     }
     std::string tmp(body);
     this->sendResponse(tmp, http);
-    //std::cout << body << std::endl;
     return true;
 }
 
@@ -212,7 +208,7 @@ bool    Cgi::exec(zia::api::HttpDuplex& http)
     const char **env;
     std::cout << "EXEC Cgi" << std::endl;
     if ((env = createVirtualEnv(http.req, http.info)) == nullptr){
-        std::cout << "Cgi: ENV is NULL" << std::endl;
+        std::cerr << "Cgi: ENV is NULL" << std::endl;
         return false;
     }
     pipe(fd);

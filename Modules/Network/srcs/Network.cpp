@@ -61,7 +61,7 @@ bool Network::stop() {
 bool Network::send(zia::api::ImplSocket *sock, const zia::api::Net::Raw &resp) {
     std::string     tmp;
     for (auto c : resp) {tmp += static_cast<char>(c);}
-    std::cout << "Sending [" << tmp << "] Network class" << std::endl;
+    //std::cout << "Sending [" << tmp << "] Network class" << std::endl;
     for (auto& socket : this->sockets) {
         socket->send(tmp);
     }

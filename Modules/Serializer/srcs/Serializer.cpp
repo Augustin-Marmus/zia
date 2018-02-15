@@ -73,6 +73,7 @@ bool        Serializer::parseBody(zia::api::HttpDuplex& http) {
 bool        Serializer::exec(zia::api::HttpDuplex& http) {
     std::string   convertedString;
 
+    std::cout << "exec serializer " << std::endl;
     for (auto& it: http.raw_req) {
       convertedString += static_cast<char>(it);
     }
