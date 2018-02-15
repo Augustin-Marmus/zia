@@ -2,7 +2,7 @@
 // Created by louis on 10/02/18.
 //
 
-#include "Cgi.hpp"
+#include "Ssl.hpp"
 
 Cgi::Cgi()
 {}
@@ -210,9 +210,9 @@ bool    Cgi::exec(zia::api::HttpDuplex& http)
     pid_t pid;
     int fd[2];
     const char **env;
-    std::cout << "EXEC Cgi" << std::endl;
+    std::cout << "EXEC Ssl" << std::endl;
     if ((env = createVirtualEnv(http.req, http.info)) == nullptr){
-        std::cout << "Cgi: ENV is NULL" << std::endl;
+        std::cout << "Ssl: ENV is NULL" << std::endl;
         return false;
     }
     pipe(fd);
