@@ -1,5 +1,5 @@
 //
-// Created by Elias Demnati on 10/02/2018.
+// Created by marmus_a on 29/01/18.
 //
 
 #include "Serializer.hpp"
@@ -17,7 +17,7 @@ extern "C" {
 #ifdef WIN32
 
 extern "C" {
-	__declspec(dllexport) zia::api::Serializer* __cdecl create() {
+	__declspec(dllexport) zia::api::Module* __cdecl create() {
 		return (new Serializer);
 	}
 }

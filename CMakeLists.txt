@@ -9,7 +9,7 @@ if (UNIX)
 	find_package(Boost 1.55 REQUIRED COMPONENTS unit_test_framework)
 endif (UNIX)
 
-include(Modules/CMakeLists.txt)
+include(Modules/Serializer/CMakeLists.txt)
 include(Core/CMakeLists.txt)
 if (WIN32)
 	include_directories(sza)
