@@ -44,13 +44,13 @@ const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::
 
 
     //TODO: find values in server's config
-    env["DOCUMENT_ROOT"] = "/home/louis/tek3/cpp_zia/Modules/Cgi";
-    env["SERVER_NAME"] = "127.0.0.1";
+    env["DOCUMENT_ROOT"] = _conf["DOCUMENT_ROOT"];
+    env["SERVER_NAME"] = _conf["SERVER_IP"];
     env["SERVER_PROTOCOL"] = "HTTP/1.1";
-    env["SERVER_PORT"] = "80";
-    env["SERVER_ADDR"] = "127.0.0.1";
-    env["SERVER_SOFTWARE"] = "zia-redteam1.1";
-    cgiDir = "/cgi-bin";
+    env["SERVER_PORT"] = _conf["SERVER_PORT"];
+    env["SERVER_ADDR"] = _conf["SERVER_IP"];
+    env["SERVER_SOFTWARE"] = _conf["SERVER_SOFTWARE"];
+    cgiDir = _conf["CGI_ALIAS"];
 
     if (std::getenv("PATH")) {  env["PATH"] = std::getenv("PATH"); }
     if (std::getenv("HOME")) {  env["HOME"] = std::getenv("HOME"); }
@@ -118,19 +118,33 @@ const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::
     return mapToTab(env);
 }
 
-bool    Cgi::config(const zia::api::Conf& conf) {
-    const std::string *name;
-    /*if (!(name = std::get_if<std::string>(&conf.at("name").v))) {
+const std::string     *Cgi::getValueByKey(const std::string& key, const zia::api::Conf& conf){
+    const std::string *value;
+    if (!(value = std::get_if<std::string>(&conf.at(key).v))) {
         std::cerr << "Error: Missing field name in a Module" << std::endl;
-        return (false);
-    }*/
-    std::cout << *name << std::endl;
+        return (nullptr);
+    }
+    std::cout << *value << std::endl;
+    return (value);
+}
+
+bool    Cgi::config(const zia::api::Conf& conf) {
+
+    _conf["PHP_CGI"] = ((getValueByKey("php-cgi", conf) != nullptr) ? *getValueByKey("php-cgi", conf) : std::to_string(MAGICK));
+    _conf["DOCUMENT_ROOT"] = ((getValueByKey("document_root", conf) != nullptr) ? *getValueByKey("document_root", conf) : std::to_string(MAGICK));
+    _conf["SERVER_PORT"] = ((getValueByKey("port", conf) != nullptr) ? *getValueByKey("port", conf) : std::to_string(MAGICK));
+    _conf["SERVER_IP"] = ((getValueByKey("ip", conf) != nullptr) ? *getValueByKey("ip", conf) : std::to_string(MAGICK));
+    _conf["CGI_ALIAS"] = ((getValueByKey("cgi_alias", conf) != nullptr) ? *getValueByKey("cgi_alias", conf) : std::to_string(MAGICK));
+    _conf["SERVER_SOFTWARE"] = ((getValueByKey("server_software", conf) != nullptr) ? *getValueByKey("server_software", conf) : std::to_string(MAGICK));
+    for (auto it : _conf)
+        if (it.second == std::to_string(MAGICK))
+            return false;
     return (true);
 }
 
 bool    Cgi::handleSon(zia::api::HttpDuplex& http, int fd[2], const char **env)
 {
-    std::string bin("/usr/bin/php-cgi");
+    std::string bin(_conf["PHP_CGI"]);
     char *argv[] = {
             strdup(bin.c_str()),
             NULL

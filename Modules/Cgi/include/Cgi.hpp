@@ -14,6 +14,7 @@
 #include            <sys/stat.h>
 
 #define             EOL     "\r\n"
+#define             MAGICK  0xDEADBEEF
 
 class               Cgi : public zia::api::Module {
 public:
@@ -28,6 +29,9 @@ private:
     bool            handleSon(zia::api::HttpDuplex& http, int fd[2], const char **env);
     bool            checkFile(const std::string& uri);
     void            sendResponse(std::string body, zia::api::HttpDuplex& http);
+    const std::string     *getValueByKey(const std::string& key , const zia::api::Conf& conf);
+
+        std::map<std::string, std::string>  _conf;
 };
 
 #endif              //CPP_ZIA_CGI_HPP
