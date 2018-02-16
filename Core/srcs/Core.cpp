@@ -116,7 +116,7 @@ bool Core::config(const zia::api::Conf& config) {
                         std::cerr << "Error: Configuration of module " << *name << " failed" << std::endl;
                         return (false);
                     }
-                    this->pipeline->insert(this->pipeline->end(), std::shared_ptr<zia::api::Module>(loadedModule));
+                    this->pipeline->insert(this->pipeline->end(), std::pair<std::string, std::shared_ptr<zia::api::Module>>(*name, std::shared_ptr<zia::api::Module>(loadedModule)));
                 } else {
                     std::cerr << "Error: can't load module from library " << path << *lib << std::endl;
                     return (false);

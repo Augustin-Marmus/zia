@@ -24,9 +24,9 @@ void Pipeline::run(zia::api::Net::Raw req, zia::api::NetInfo netInfo, zia::api::
         std::cout << "[" << netInfo.ip.str << ":" << netInfo.port << "]: " << tmp << std::flush;
         httpDuplex.raw_req = req;
         httpDuplex.raw_resp = req;
-        for (auto ie : *this){
+        for (auto& it : *this){
             std::cout << "--------" << std::endl;
-            if (!ie.get()->exec(httpDuplex)){
+            if (!it.second->exec(httpDuplex)){
                 break;
             }
         }
