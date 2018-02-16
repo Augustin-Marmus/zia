@@ -5,21 +5,16 @@
 #include "Core.hpp"
 
 Core::Core() {
-    std::cout << "Constructing Core" << std::endl;
+    this->net = nullptr;
 }
 
 
 Core::~Core() {
-    std::cout << "Destructing Core" << std::endl;
-    //TODO unique_ptr segfault destroying "Core"
-    if (this->net) {
-        delete this->net;
-    }
+    delete this->net;
 }
 
 bool Core::run(const zia::api::Conf& config) {
     if (!this->config(config) || !this->pipeline) {
-        std::cerr << "Failed to configure Core" << std::endl;
         return (false);
     }
     return (this->net->run(this->pipeline->getCallback(*this->net)));
@@ -56,11 +51,13 @@ bool Core::config(const zia::api::Conf& config) {
             if (auto libname = std::get_if<std::string>(&netConfig->at("lib").v)) {
                 if (!this->moduleLoader.loadLibrary(netpath, *libname)) {
                     std::cerr << "Error: Failed to load " << netpath << *libname << std::endl;
+                    return (false);
                 }
             }
 
             if (!(this->net = this->moduleLoader.loadNetwork())) {
                 std::cerr << "Error: Failed to instanciate module Net" << std::endl;
+                return (false);
             }
 
             if (auto netInternConfig = std::get_if<zia::api::Conf>(&netConfig->at("config").v)) {
@@ -116,7 +113,7 @@ bool Core::config(const zia::api::Conf& config) {
                         std::cerr << "Error: Configuration of module " << *name << " failed" << std::endl;
                         return (false);
                     }
-                    this->pipeline->insert(this->pipeline->end(), std::pair<std::string, std::shared_ptr<zia::api::Module>>(*name, std::shared_ptr<zia::api::Module>(loadedModule)));
+                    this->pipeline->push_back(std::shared_ptr<zia::api::Module>(loadedModule));
                 } else {
                     std::cerr << "Error: can't load module from library " << path << *lib << std::endl;
                     return (false);

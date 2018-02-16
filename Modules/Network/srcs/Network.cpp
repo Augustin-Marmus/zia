@@ -35,7 +35,6 @@ bool Network::config(const zia::api::Conf &conf) {
 }
 
 bool Network::run(zia::api::Net::Callback cb) {
-    std::cout << "Running Network class" << std::endl;
     std::shared_ptr<ISocket>     connexion(new Socket);
 
     this->listener->listen();
@@ -45,7 +44,6 @@ bool Network::run(zia::api::Net::Callback cb) {
 }
 
 bool Network::stop() {
-    std::cout << "Stopping Network class" << std::endl;
     {
         std::unique_lock<std::mutex> lock(this->locker);
         this->listener->close();
@@ -61,9 +59,8 @@ bool Network::stop() {
 bool Network::send(zia::api::ImplSocket *sock, const zia::api::Net::Raw &resp) {
     std::string     tmp;
     for (auto c : resp) {tmp += static_cast<char>(c);}
-    //std::cout << "Sending [" << tmp << "] Network class" << std::endl;
-    for (auto& socket : this->sockets) {
-        socket->send(tmp);
+    if (sock) {
+        sock->send(tmp);
     }
     return (true);
 }

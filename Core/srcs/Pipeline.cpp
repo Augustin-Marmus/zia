@@ -25,7 +25,7 @@ void Pipeline::run(zia::api::Net::Raw req, zia::api::NetInfo netInfo, zia::api::
         httpDuplex.raw_req = req;
         httpDuplex.raw_resp = req;
         for (auto& it : *this){
-            if (!it.second->exec(httpDuplex)){
+            if (it->exec(httpDuplex)){
                 break;
             }
         }

@@ -1,9 +1,10 @@
 {
   "Core" : {
-    "threads" : 4
+    "workers" : 4
   },
   "Net" : {
     "name" : "network",
+    "path" : "./",
     "lib" : "zia-network",
     "config" : {
       "port" : 1338,

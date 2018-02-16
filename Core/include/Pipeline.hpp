@@ -12,7 +12,7 @@
 #include "ThreadPool.hpp"
 #include "ISocket.hpp"
 
-class Pipeline : public std::unordered_map<std::string, std::shared_ptr<zia::api::Module>>{
+class Pipeline : public std::vector<std::shared_ptr<zia::api::Module>>{
 public:
     Pipeline(int nbWorker = 4);
     ~Pipeline();
