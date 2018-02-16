@@ -6,7 +6,7 @@
     "name" : "network",
     "lib" : "zia-network",
     "config" : {
-      "port" : 1339,
+      "port" : 1338,
       "ip_binding" : "0.0.0.0"
     }
   },
