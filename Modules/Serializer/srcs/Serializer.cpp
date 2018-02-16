@@ -29,7 +29,7 @@ bool        Serializer::config(const zia::api::Conf& conf) {
 }
 
 bool        Serializer::parseMethodVersionUri(zia::api::HttpDuplex& http) {
-  const std::regex  mvuRegex("((?:.*)) ((?:.*)) ((?:.*))");
+  const std::regex  mvuRegex("((?:.*)) ((?:.*)) ((?:.*))\r");
   std::string       line;
   std::smatch       match;
 
@@ -47,7 +47,7 @@ bool        Serializer::parseMethodVersionUri(zia::api::HttpDuplex& http) {
 }
 
 bool        Serializer::parseHeaders(zia::api::HttpDuplex& http) {
-  const std::regex headerRegex("((?:.*)): ((?:.*))");
+  const std::regex headerRegex("((?:.*)): ((?:.*))\r");
   std::string      line;
   std::smatch      match;
 
