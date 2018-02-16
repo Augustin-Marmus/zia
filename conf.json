@@ -6,11 +6,17 @@
     "name" : "network",
     "lib" : "zia-network",
     "config" : {
-      "port" : 1337,
+      "port" : 1338,
       "ip_binding" : "0.0.0.0"
     }
   },
   "Modules" : [
+    {
+      "name" : "serializer",
+      "path" : "./",
+      "lib" : "zia-serializer",
+      "config" : {}
+    },
     {
       "name" : "cgi",
       "path" : "./",
