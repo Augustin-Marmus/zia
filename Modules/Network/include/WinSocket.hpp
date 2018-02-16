@@ -20,7 +20,7 @@ public:
 	virtual bool                    bind(const std::string& addr, const std::string& port);
 	virtual bool                    bind(const std::string& addr, int port);
 	virtual bool                    listen();
-	virtual bool                    accept(ISocket& socket);
+	virtual bool                    accept(zia::api::ImplSocket& socket);
 	virtual bool                    close();
 
 	virtual int                     send(const std::string& str);

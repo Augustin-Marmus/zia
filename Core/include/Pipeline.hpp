@@ -10,6 +10,7 @@
 #include <vector>
 #include "api/module.h"
 #include "ThreadPool.hpp"
+#include "ISocket.hpp"
 
 class Pipeline : public std::unordered_map<std::string, std::shared_ptr<zia::api::Module>>{
 public:
