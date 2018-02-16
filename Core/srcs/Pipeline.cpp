@@ -16,9 +16,8 @@ Pipeline::~Pipeline() {
 void Pipeline::run(zia::api::Net::Raw req, zia::api::NetInfo netInfo, zia::api::Net& network) const {
     this->pool->runAsync([this, req, netInfo, &network] {
         zia::api::HttpDuplex httpDuplex;
-
-        bool    moduleHasExit = false;
         std::string tmp;
+
         for (auto c : req) {
             tmp.push_back(static_cast<char>(c));
         }
@@ -27,12 +26,12 @@ void Pipeline::run(zia::api::Net::Raw req, zia::api::NetInfo netInfo, zia::api::
         httpDuplex.raw_resp = req;
         for (auto& it : *this){
             if (!it.second->exec(httpDuplex)){
-                moduleHasExit = true;
                 break;
             }
         }
         network.send(netInfo.sock, httpDuplex.raw_resp);
-        if (moduleHasExit) {
+        if (httpDuplex.resp.headers.find("Connection") != httpDuplex.resp.headers.end()
+            && httpDuplex.resp.headers["Connection"] == "close") {
             netInfo.sock->close();
         }
     });
