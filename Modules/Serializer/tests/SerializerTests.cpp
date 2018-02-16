@@ -39,4 +39,14 @@ BOOST_AUTO_TEST_CASE(request_with_no_mvu) {
         BOOST_CHECK(!srlz->exec(duplex));
 }
 
+BOOST_AUTO_TEST_CASE(get_requestion_with_cgi_bin) {
+      Serializer* srlz = new Serializer();
+      std::string raw_resq = "GET /cgi-bin HTTP/1.1\nHost: localhost:1338\nConnection: keep-alive\nCache-Control: max-age=0\nUpgrade-Insecure-Requests: 1\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.167 Safari/537.36\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\nAccept-Encoding: gzip, deflate, br\nAccept-Language: fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7\nCookie: csrftoken=5hmQlNwEcvMBa7i85RbpirK9RBjo4tXW";
+      zia::api::HttpDuplex duplex;
+      for (auto it: raw_resq) {
+        duplex.raw_req.push_back(static_cast<std::byte>(it));
+      }
+      BOOST_CHECK(srlz->exec(duplex));
+}
+
 BOOST_AUTO_TEST_SUITE_END()

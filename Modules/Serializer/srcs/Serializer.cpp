@@ -79,5 +79,5 @@ bool        Serializer::exec(zia::api::HttpDuplex& http) {
     }
     this->reqStream.str(convertedString);
 
-    return this->parseMethodVersionUri(http) && this->parseHeaders(http);
+    return this->parseMethodVersionUri(http) && this->parseHeaders(http) && this->parseBody(http);
 }
