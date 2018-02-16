@@ -10,7 +10,7 @@
 #include "api/module.h"
 #include "ThreadPool.hpp"
 
-class Pipeline : public std::map<std::string, std::shared_ptr<zia::api::Module>>{
+class Pipeline : public std::unordered_map<std::string, std::shared_ptr<zia::api::Module>>{
 public:
     Pipeline(int nbWorker = 4);
     ~Pipeline();

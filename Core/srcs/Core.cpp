@@ -27,13 +27,44 @@ bool Core::run(const zia::api::Conf& config) {
 
 bool Core::config(const zia::api::Conf& config) {
     try {
-        this->pipeline = std::make_shared<Pipeline>(4/* get Conf nbWorkers*/);
-        this->moduleLoader.loadLibrary("./", "zia-network");
-        this->net = this->moduleLoader.loadNetwork();
+        if (config.find("Core") != config.end()) {
+            if (auto CoreConfig = std::get_if<zia::api::Conf>(&config.at("Core").v)) {
+                if (CoreConfig->find("workers") != CoreConfig->end()) {
+                    if (auto workers = std::get_if<long long>(&CoreConfig->at("workers").v)) {
+                        this->pipeline = std::make_shared<Pipeline>(static_cast<int>(*workers));
+                    }
+                } else {
+                    this->pipeline = std::make_shared<Pipeline>(4);
+                }
+            } else {
+                std::cerr << "Error: Bad type for core config" << std::endl;
+                return (false);
+            }
+        } else {
+            std::cerr << "Error: Missing core config" << std::endl;
+            return (false);
+        }
         if (auto netConfig = std::get_if<zia::api::Conf>(&config.at("Net").v)) {
-            if (auto netInternConfig = std::get_if<zia::api::Conf>(&netConfig->at("config").v)) {
-                if (!this->net || !this->net->config(*netInternConfig)) {
+            std::string netpath;
+            if (netConfig->find("path") == netConfig->end()) {
+                netpath = "";
+            } else {
+                if (auto tmpNetPath = std::get_if<std::string>(&netConfig->at("path").v)) {
+                    netpath = *tmpNetPath;
+                }
+            }
+            if (auto libname = std::get_if<std::string>(&netConfig->at("lib").v)) {
+                if (!this->moduleLoader.loadLibrary(netpath, *libname)) {
+                    std::cerr << "Error: Failed to load " << netpath << *libname << std::endl;
+                }
+            }
 
+            if (!(this->net = this->moduleLoader.loadNetwork())) {
+                std::cerr << "Error: Failed to instanciate module Net" << std::endl;
+            }
+
+            if (auto netInternConfig = std::get_if<zia::api::Conf>(&netConfig->at("config").v)) {
+                if (!this->net->config(*netInternConfig)) {
                     return (false);
                 }
             } else {
@@ -57,10 +88,12 @@ bool Core::config(const zia::api::Conf& config) {
                     std::cerr << "Error: bad Module conf type" << std::endl;
                     return (false);
                 }
-                if (auto tmpPath = std::get_if<std::string>(&moduleConf->at("path").v)) {
-                path = *tmpPath;
+                if (moduleConf->find("path") != moduleConf->end()) {
+                    if (auto tmpPath = std::get_if<std::string>(&moduleConf->at("path").v)) {
+                        path = *tmpPath;
+                    }
                 } else {
-                path = "";
+                    path = "";
                 }
                 if (!(name = std::get_if<std::string>(&moduleConf->at("name").v))) {
                     std::cerr << "Error: Missing field name in a Module" << std::endl;
