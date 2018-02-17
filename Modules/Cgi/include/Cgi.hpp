@@ -16,10 +16,10 @@
 #define             EOL     "\r\n"
 #define             MAGICK  0xDEADBEEF
 
-class               Ssl : public zia::api::Module {
+class               Cgi : public zia::api::Module {
 public:
-    Ssl();
-    virtual         ~Ssl();
+    Cgi();
+    virtual         ~Cgi();
     virtual bool    config(const zia::api::Conf& conf);
     virtual bool    exec(zia::api::HttpDuplex& http);
 private:
