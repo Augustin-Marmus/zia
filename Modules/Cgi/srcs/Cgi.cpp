@@ -37,8 +37,9 @@ bool        Cgi::checkFile(const std::string& rUri)
     }
 }
 
-const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::api::NetInfo& net)
+const char **Cgi::createVirtualEnv(zia::api::HttpDuplex& dup, const zia::api::NetInfo& net)
 {
+    const zia::api::HttpRequest req = dup.req;
     std::map<std::string, std::string>  env;
     std::string query, uri, script, cgiDir, cgiRealDir;
     struct stat  st;
@@ -90,12 +91,11 @@ const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::
     }
     env["SCRIPT_FILENAME"] = env["DOCUMENT_ROOT"] + cgiDir + script;
     if (stat(env["SCRIPT_FILENAME"].c_str(), &st) < 0) {
-        // 404 not found
-        std::cout << "404 nf"<<std::endl;
+        sendNotFound(dup, zia::api::http::common_status::not_found);
         return nullptr;
     }
     if (!(st.st_mode & S_IEXEC) != 0) {
-        std::cout << "401 / 403 ?" << std::endl;
+        sendNotAuthorized(dup, zia::api::http::common_status::forbidden);
         return nullptr;
     }
     env["QUERY_STRING"] = query;
@@ -104,14 +104,12 @@ const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::
     env["REMOTE_ADDR"] = net.ip.str;
     env["REMOTE_PORT"] = std::to_string(net.port);
     env["REDIRECT_STATUS"] = "true";
-    for (auto it : env){
-        std::cout << it.first << "@@" << it.second << std::endl;
-    }
     return mapToTab(env);
 }
 
 const std::string     *Cgi::getValueByKey(const std::string& key, const zia::api::Conf& conf){
     const std::string *value;
+
     if (!(value = std::get_if<std::string>(&conf.at(key).v))) {
         std::cerr << "Error: Missing field name in a Module" << std::endl;
         return (nullptr);
@@ -158,13 +156,12 @@ void    Cgi::sendResponse(std::string raw, zia::api::HttpDuplex& http)
     if (index != std::string::npos){
         body = raw.substr(index + 4);
     }
-    raw.insert(0, "HTTP1/1 200 OK\r\nContent-Length:" + std::to_string(body.length()) + "\r\n");
+    http.resp.status = zia::api::http::common_status::ok;
+    http.resp.headers["Content-Length"] = std::to_string(body.length());
     zia::api::Net::Raw res;
     for (auto c : raw) {
-        res.push_back(static_cast<std::byte>(c));
+        http.resp.body.push_back(static_cast<std::byte>(c));
     }
-    http.raw_resp.clear();
-    http.raw_resp = res;
 }
 
 bool    Cgi::handleFather(int fd_in[2],int fd_out[2], pid_t pid, zia::api::HttpDuplex& http)
@@ -176,7 +173,6 @@ bool    Cgi::handleFather(int fd_in[2],int fd_out[2], pid_t pid, zia::api::HttpD
 
     close(fd_in[0]);
     close(fd_out[1]);
-    //write(fd_in[1], "\r\nsalutmdr\r\n", 12);
     close(fd_in[1]);
     if (cid < 0) {
         close(fd_out[0]);
@@ -196,6 +192,32 @@ bool    Cgi::handleFather(int fd_in[2],int fd_out[2], pid_t pid, zia::api::HttpD
     return true;
 }
 
+void    Cgi::sendNotFound(zia::api::HttpDuplex& http, zia::api::http::Status status){
+    std::string body("<html><head>\n<title>404 Not Found</title>\n</head><body>\n<h1>Not Found</h1>\n<p>The requested URL " + http.req.uri + " was not found on this server.</p>\n</body></html>\r\n");
+    std::string res("HTTP1.1 404 OK\r\nContent-Length: " + std::to_string(body.length()) + "\r\nContent-Type: text/html; charset=UTF-8\r\nstatus: 404\r\n\r\n");
+    http.raw_resp.clear();
+    for (auto c : res) {http.raw_resp.push_back(static_cast<std::byte>(c));}
+    for (auto c : body) {http.raw_resp.push_back(static_cast<std::byte>(c));}
+}
+
+void    Cgi::sendIE(zia::api::HttpDuplex& http, zia::api::http::Status status)
+{
+    std::string body("<html><head>\n<title>500 OOOOOOPPPSSSYYY</title>\n</head><body>\n<h1>Something went wrong ... (augustin, notre stagiaire, a encore esseye de commit ...)</h1></body></html>\r\n");
+    std::string res("HTTP1.1 500 OOPSY\r\nContent-Length: " + std::to_string(body.length()) + "\r\nContent-Type: text/html; charset=UTF-8\r\nstatus: 500\r\n\r\n");
+    http.raw_resp.clear();
+    for (auto c : res) {http.raw_resp.push_back(static_cast<std::byte>(c));}
+    for (auto c : body) {http.raw_resp.push_back(static_cast<std::byte>(c));}
+}
+
+void    Cgi::sendNotAuthorized(zia::api::HttpDuplex& http, zia::api::http::Status status)
+{
+    std::string body("<html><head>\n<title>403 NotAuthorized</title>\n</head><body>\n<h1>Not Authorized</h1>\n<p>You don't are alowed to go to  " + http.req.uri + ".</p>\n</body></html>\r\n");
+    std::string res("HTTP1.1 403 OK\r\nContent-Length: " + std::to_string(body.length()) + "\r\nContent-Type: text/html; charset=UTF-8\r\nstatus: 403\r\n\r\n");
+    http.raw_resp.clear();
+    for (auto c : res) {http.raw_resp.push_back(static_cast<std::byte>(c));}
+    for (auto c : body) {http.raw_resp.push_back(static_cast<std::byte>(c));}
+}
+
 bool    Cgi::exec(zia::api::HttpDuplex& http)
 {
     pid_t pid;
@@ -203,7 +225,7 @@ bool    Cgi::exec(zia::api::HttpDuplex& http)
     int fd_out[2];
 
     const char **env;
-    if ((env = createVirtualEnv(http.req, http.info)) == nullptr){
+    if ((env = createVirtualEnv(http, http.info)) == nullptr){
         std::cerr << "Cgi: ENV is NULL" << std::endl;
         return false;
     }
@@ -216,14 +238,17 @@ bool    Cgi::exec(zia::api::HttpDuplex& http)
         close(fd_out[1]);
         close(fd_out[0]);
         close(fd_in[1]);
+        sendIE(http, zia::api::http::common_status::internal_server_error);
         return false;
     }
     if (pid == 0) {
        this->handleSon(http, fd_in, fd_out, env);
         return (true);
     } else {
-        if (!this->handleFather(fd_in, fd_out, pid, http))
+        if (!this->handleFather(fd_in, fd_out, pid, http)){
+            sendIE(http, zia::api::http::common_status::internal_server_error);
             return false;
+        }
     }
     return true;
 }

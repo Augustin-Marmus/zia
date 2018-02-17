@@ -86,6 +86,7 @@ bool        Unserializer::convertToByte(std::stringstream& ss, zia::api::HttpDup
 
 bool        Unserializer::exec(zia::api::HttpDuplex& http) {
   std::stringstream ss;
-
+  //TODO a modif ?
+  ss << "HTTP1.1 ";
   return this->setResponse(ss, http) && this->convertToByte(ss, http);
 }
