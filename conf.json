@@ -7,7 +7,7 @@
     "path" : "./",
     "lib" : "zia-network",
     "config" : {
-      "port" : 1338,
+      "port" : 8080,
       "ip_binding" : "0.0.0.0"
     }
   },
