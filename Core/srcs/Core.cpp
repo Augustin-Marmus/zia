@@ -6,11 +6,13 @@
 
 Core::Core() {
     this->net = nullptr;
+    this->pipeline = nullptr;
 }
 
 
 Core::~Core() {
     delete this->net;
+    delete this->pipeline;
 }
 
 bool Core::run(const zia::api::Conf& config) {
@@ -26,10 +28,10 @@ bool Core::config(const zia::api::Conf& config) {
             if (auto CoreConfig = std::get_if<zia::api::Conf>(&config.at("Core").v)) {
                 if (CoreConfig->find("workers") != CoreConfig->end()) {
                     if (auto workers = std::get_if<long long>(&CoreConfig->at("workers").v)) {
-                        this->pipeline = std::make_shared<Pipeline>(static_cast<int>(*workers));
+                        this->pipeline = new Pipeline(static_cast<int>(*workers));
                     }
                 } else {
-                    this->pipeline = std::make_shared<Pipeline>(4);
+                    this->pipeline = new Pipeline(4);
                 }
             } else {
                 std::cerr << "Error: Bad type for core config" << std::endl;

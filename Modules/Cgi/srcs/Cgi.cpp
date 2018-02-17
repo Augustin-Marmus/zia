@@ -3,6 +3,7 @@
 //
 
 #include "Cgi.hpp"
+#include "ISocket.hpp"
 
 Cgi::Cgi()
 {}
@@ -42,13 +43,14 @@ const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::
     std::string query, uri, script, cgiDir, cgiRealDir;
     struct stat  st;
 
-    std::cout << "-----------------------------------" << std::endl;
+    /*std::cout << "-----------------------------------" << std::endl;
     std::cout << req.uri << std::endl;
     for (auto it: req.headers){
         std::cout << it.first << "\t" << it.second << std::endl;
     }
     std::cout << "-----------------------------------" << std::endl;
-    //TODO: find values in server's config
+    */
+     //TODO: find values in server's config
     env["DOCUMENT_ROOT"] = _conf["DOCUMENT_ROOT"];
     env["SERVER_NAME"] = _conf["SERVER_IP"];
     env["SERVER_PROTOCOL"] = "HTTP/1.1";
@@ -142,17 +144,29 @@ bool    Cgi::config(const zia::api::Conf& conf) {
     return (true);
 }
 
-bool    Cgi::handleSon(zia::api::HttpDuplex& http, int fd[2], const char **env)
+bool    Cgi::handleSon(zia::api::HttpDuplex& http, int fd_in[2],int fd_out[2], const char **env)
 {
+    std::cerr << "EXECVe4" << std::endl;
+
     std::string bin(_conf["PHP_CGI"]);
     char *argv[] = {
             strdup(bin.c_str()),
             NULL
     };
-    //close(http.info.sock->getSocket());
-    close(fd[0]);
-    dup2(fd[1], 1);
-    return (execve(bin.c_str(), argv,  const_cast<char * const*>(env)));
+    std::cerr << "EXECVe1" << std::endl;
+    //close(http.info.sock->close());
+    dup2(fd_in[0], 0);
+    dup2(fd_out[1], 1);
+    close(fd_in[1]);
+    close(fd_out[0]);
+    std::cerr << "EXECVe0" << std::endl;
+    int ret;
+    ret = execve(bin.c_str(), argv,  const_cast<char * const*>(env));
+    if (ret == -1){
+        std::cerr << "OPPPPPPPS" << std::endl;
+        perror("execve");
+    }
+    exit(true);
 }
 
 void    Cgi::sendResponse(std::string raw, zia::api::HttpDuplex& http)
@@ -174,29 +188,32 @@ void    Cgi::sendResponse(std::string raw, zia::api::HttpDuplex& http)
     http.raw_resp = res;
 }
 
-bool    Cgi::handleFather(int fd[2], pid_t pid, zia::api::HttpDuplex& http)
+bool    Cgi::handleFather(int fd_in[2],int fd_out[2], pid_t pid, zia::api::HttpDuplex& http)
 {
     char buff[256];
     int cid;
     std::string body;
     int     size;
 
-    close(fd[1]);
+    close(fd_in[0]);
+    close(fd_out[1]);
+    close(fd_in[1]);
     waitpid(pid, &cid, 0);
     if (cid < 0) {
-        close(fd[0]);
+        close(fd_out[0]);
         return false;
     }
-    size = read(fd[0], buff, 128);
+    size = read(fd_out[0], buff, 256);
     while (size != -1 && size) {
         body.append(buff, size);
-        size = read(fd[0], buff, 128);
+        size = read(fd_out[0], buff, 256);
     }
     if (size == -1) {
-        close(fd[0]);
+        close(fd_out[0]);
         return false;
     }
     std::string tmp(body);
+    std::cout << "cgi sending[" << tmp << "]" << std::endl;
     this->sendResponse(tmp, http);
     return true;
 }
@@ -204,26 +221,41 @@ bool    Cgi::handleFather(int fd[2], pid_t pid, zia::api::HttpDuplex& http)
 bool    Cgi::exec(zia::api::HttpDuplex& http)
 {
     pid_t pid;
-    int fd[2];
+    int fd_in[2];
+    int fd_out[2];
+
     const char **env;
     std::cout << "EXEC Cgi" << std::endl;
     if ((env = createVirtualEnv(http.req, http.info)) == nullptr){
         std::cerr << "Cgi: ENV is NULL" << std::endl;
+        std::cerr << "EXITING 1" << std::endl;
+
         return false;
     }
-    pipe(fd);
+    pipe(fd_in);
+    pipe(fd_out);
     pid = fork();
     if (pid == -1) {
-        close(fd[0]);
-        close(fd[1]);
+        close(fd_in[0]);
+        close(fd_out[1]);
+        close(fd_out[0]);
+        close(fd_in[1]);
+        std::cout << "fork failed" << std::endl;
+        std::cerr << "EXITING 4" << std::endl;
+
         return false;
     }
     if (pid == 0) {
-        return (this->handleSon(http, fd, env));
+        std::cout << "exec son" << std::endl;
+        std::cerr << "EXITING 3" << std::endl;
+
+        return (this->handleSon(http, fd_in, fd_out, env));
     } else {
-        if (!this->handleFather(fd, pid, http))
+        std::cout << "exec father" << std::endl;
+        if (!this->handleFather(fd_in, fd_out, pid, http))
             return false;
     }
+    std::cerr << "EXITING 6" << std::endl;
     return true;
 }
 
