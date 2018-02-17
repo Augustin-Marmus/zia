@@ -43,14 +43,6 @@ const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::
     std::string query, uri, script, cgiDir, cgiRealDir;
     struct stat  st;
 
-    /*std::cout << "-----------------------------------" << std::endl;
-    std::cout << req.uri << std::endl;
-    for (auto it: req.headers){
-        std::cout << it.first << "\t" << it.second << std::endl;
-    }
-    std::cout << "-----------------------------------" << std::endl;
-    */
-     //TODO: find values in server's config
     env["DOCUMENT_ROOT"] = _conf["DOCUMENT_ROOT"];
     env["SERVER_NAME"] = _conf["SERVER_IP"];
     env["SERVER_PROTOCOL"] = "HTTP/1.1";
@@ -58,16 +50,11 @@ const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::
     env["SERVER_ADDR"] = _conf["SERVER_IP"];
     env["SERVER_SOFTWARE"] = _conf["SERVER_SOFTWARE"];
     cgiDir = _conf["CGI_ALIAS"];
-
     if (std::getenv("PATH")) {  env["PATH"] = std::getenv("PATH"); }
     if (std::getenv("HOME")) {  env["HOME"] = std::getenv("HOME"); }
-
-    //TODO: find values in req
-    env["REQUEST_METHOD"] = "post";
-    //env["REQUEST_URI"] = req.uri;
-    //uri = req.uri;
-    env["REQUEST_URI"] = "http://localhost:1337/cgi-bin/env.php";
-    uri = "http://localhost:1337/cgi-bin/env.php";
+    env["REQUEST_METHOD"] = "GET";
+    env["REQUEST_URI"] = "http://" + env["HTTP_HOST"] + req.uri ;
+    uri = env["REQUEST_URI"];
     if (req.headers.find("Accept") != req.headers.end())
         env["HTTP_ACCEPT"] = req.headers.at("Accept");
     if (req.headers.find("Accept-Encoding") != req.headers.end())
@@ -89,7 +76,6 @@ const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::
     if (req.headers.find("Content-Type") != req.headers.end())
         env["CONTENT_TYPE"] = req.headers.at("Content-Type");
     env["HTTP_REFERER"] = "";
-
     this->checkFile(uri);
     if (uri.find("?") != uri.npos) {
         query = uri.substr(uri.find("?") + 1);
@@ -99,16 +85,17 @@ const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::
         script = uri.substr(uri.find(cgiDir) + cgiDir.size());
     }
     if (!script.size()){
+        std::cout << "404 not found" << std::endl;
         return nullptr;
     }
-
     env["SCRIPT_FILENAME"] = env["DOCUMENT_ROOT"] + cgiDir + script;
     if (stat(env["SCRIPT_FILENAME"].c_str(), &st) < 0) {
         // 404 not found
+        std::cout << "404 nf"<<std::endl;
         return nullptr;
     }
     if (!(st.st_mode & S_IEXEC) != 0) {
-        // error cannot exec
+        std::cout << "401 / 403 ?" << std::endl;
         return nullptr;
     }
     env["QUERY_STRING"] = query;
@@ -117,7 +104,9 @@ const char **Cgi::createVirtualEnv(const zia::api::HttpRequest& req, const zia::
     env["REMOTE_ADDR"] = net.ip.str;
     env["REMOTE_PORT"] = std::to_string(net.port);
     env["REDIRECT_STATUS"] = "true";
-
+    for (auto it : env){
+        std::cout << it.first << "@@" << it.second << std::endl;
+    }
     return mapToTab(env);
 }
 
@@ -146,27 +135,17 @@ bool    Cgi::config(const zia::api::Conf& conf) {
 
 bool    Cgi::handleSon(zia::api::HttpDuplex& http, int fd_in[2],int fd_out[2], const char **env)
 {
-    std::cerr << "EXECVe4" << std::endl;
-
     std::string bin(_conf["PHP_CGI"]);
     char *argv[] = {
             strdup(bin.c_str()),
             NULL
     };
-    std::cerr << "EXECVe1" << std::endl;
     //close(http.info.sock->close());
     dup2(fd_in[0], 0);
     dup2(fd_out[1], 1);
     close(fd_in[1]);
     close(fd_out[0]);
-    std::cerr << "EXECVe0" << std::endl;
-    int ret;
-    ret = execve(bin.c_str(), argv,  const_cast<char * const*>(env));
-    if (ret == -1){
-        std::cerr << "OPPPPPPPS" << std::endl;
-        perror("execve");
-    }
-    exit(true);
+    exit(execve(bin.c_str(), argv,  const_cast<char * const*>(env)));
 }
 
 void    Cgi::sendResponse(std::string raw, zia::api::HttpDuplex& http)
@@ -197,8 +176,8 @@ bool    Cgi::handleFather(int fd_in[2],int fd_out[2], pid_t pid, zia::api::HttpD
 
     close(fd_in[0]);
     close(fd_out[1]);
+    //write(fd_in[1], "\r\nsalutmdr\r\n", 12);
     close(fd_in[1]);
-    waitpid(pid, &cid, 0);
     if (cid < 0) {
         close(fd_out[0]);
         return false;
@@ -213,7 +192,6 @@ bool    Cgi::handleFather(int fd_in[2],int fd_out[2], pid_t pid, zia::api::HttpD
         return false;
     }
     std::string tmp(body);
-    std::cout << "cgi sending[" << tmp << "]" << std::endl;
     this->sendResponse(tmp, http);
     return true;
 }
@@ -225,14 +203,12 @@ bool    Cgi::exec(zia::api::HttpDuplex& http)
     int fd_out[2];
 
     const char **env;
-    std::cout << "EXEC Cgi" << std::endl;
     if ((env = createVirtualEnv(http.req, http.info)) == nullptr){
         std::cerr << "Cgi: ENV is NULL" << std::endl;
-        std::cerr << "EXITING 1" << std::endl;
-
         return false;
     }
     pipe(fd_in);
+
     pipe(fd_out);
     pid = fork();
     if (pid == -1) {
@@ -240,22 +216,15 @@ bool    Cgi::exec(zia::api::HttpDuplex& http)
         close(fd_out[1]);
         close(fd_out[0]);
         close(fd_in[1]);
-        std::cout << "fork failed" << std::endl;
-        std::cerr << "EXITING 4" << std::endl;
-
         return false;
     }
     if (pid == 0) {
-        std::cout << "exec son" << std::endl;
-        std::cerr << "EXITING 3" << std::endl;
-
-        return (this->handleSon(http, fd_in, fd_out, env));
+       this->handleSon(http, fd_in, fd_out, env);
+        return (true);
     } else {
-        std::cout << "exec father" << std::endl;
         if (!this->handleFather(fd_in, fd_out, pid, http))
             return false;
     }
-    std::cerr << "EXITING 6" << std::endl;
     return true;
 }
 
