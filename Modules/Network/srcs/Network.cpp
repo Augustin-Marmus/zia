@@ -35,8 +35,6 @@ bool Network::config(const zia::api::Conf &conf) {
 }
 
 bool Network::run(zia::api::Net::Callback cb) {
-    std::shared_ptr<ISocket>     connexion(new Socket);
-
     this->listener->listen();
     this->callback = cb;
     this->thread = std::make_unique<std::thread>(networkRoutine, this);

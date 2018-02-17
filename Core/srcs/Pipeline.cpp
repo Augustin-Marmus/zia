@@ -18,7 +18,7 @@ void Pipeline::run(zia::api::Net::Raw req, zia::api::NetInfo netInfo, zia::api::
         zia::api::HttpDuplex httpDuplex;
         std::string tmp;
 
-        for (auto c : req) {
+        for (auto& c : req) {
             tmp.push_back(static_cast<char>(c));
         }
         std::cout << "[" << netInfo.ip.str << ":" << netInfo.port << "]: " << tmp << std::flush;

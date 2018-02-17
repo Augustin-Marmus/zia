@@ -20,9 +20,9 @@ public:
 private:
     bool            config(const zia::api::Conf& config);
 
-    std::shared_ptr<Pipeline>       pipeline;
+    Pipeline*                       pipeline;
     zia::api::Net*                  net;
-    ModuleLoader   moduleLoader;
+    ModuleLoader                    moduleLoader;
 };
 
 
