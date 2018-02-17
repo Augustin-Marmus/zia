@@ -49,7 +49,7 @@ bool WinSocket::listen()
 	return (!::listen(this->socket, WinSocket::MAXQUEUE));
 }
 
-bool WinSocket::accept(ISocket & socket)
+bool WinSocket::accept(zia::api::ImplSocket& socket)
 {
 	int addrLen = sizeof(struct sockaddr_in);
 

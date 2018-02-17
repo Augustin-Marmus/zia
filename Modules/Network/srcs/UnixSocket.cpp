@@ -47,7 +47,7 @@ bool UnixSocket::listen() {
     return (!::listen(this->socket, UnixSocket::MAXQUEUE));
 }
 
-bool UnixSocket::accept(ISocket &socket) {
+bool UnixSocket::accept(zia::api::ImplSocket &socket) {
     socklen_t addrLen;
     auto unixSocket = dynamic_cast<UnixSocket *>(&socket);
     if (unixSocket) {

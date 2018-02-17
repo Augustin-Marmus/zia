@@ -72,6 +72,7 @@ if (UNIX)
             ${CMAKE_CURRENT_LIST_DIR}/include/ThreadPool.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/ModuleLoader.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/IModuleLoader.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/include/ISocket.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/UnixModuleLoader.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/FileWatcher.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/IFileWatcher.hpp

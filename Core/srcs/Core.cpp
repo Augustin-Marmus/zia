@@ -5,21 +5,18 @@
 #include "Core.hpp"
 
 Core::Core() {
-    std::cout << "Constructing Core" << std::endl;
+    this->net = nullptr;
+    this->pipeline = nullptr;
 }
 
 
 Core::~Core() {
-    std::cout << "Destructing Core" << std::endl;
-    //TODO unique_ptr segfault destroying "Core"
-    if (this->net) {
-        delete this->net;
-    }
+    delete this->net;
+    delete this->pipeline;
 }
 
 bool Core::run(const zia::api::Conf& config) {
     if (!this->config(config) || !this->pipeline) {
-        std::cerr << "Failed to configure Core" << std::endl;
         return (false);
     }
     return (this->net->run(this->pipeline->getCallback(*this->net)));
@@ -27,13 +24,46 @@ bool Core::run(const zia::api::Conf& config) {
 
 bool Core::config(const zia::api::Conf& config) {
     try {
-        this->pipeline = std::make_shared<Pipeline>(4/* get Conf nbWorkers*/);
-        this->moduleLoader.loadLibrary("./", "zia-network");
-        this->net = this->moduleLoader.loadNetwork();
+        if (config.find("Core") != config.end()) {
+            if (auto CoreConfig = std::get_if<zia::api::Conf>(&config.at("Core").v)) {
+                if (CoreConfig->find("workers") != CoreConfig->end()) {
+                    if (auto workers = std::get_if<long long>(&CoreConfig->at("workers").v)) {
+                        this->pipeline = new Pipeline(static_cast<int>(*workers));
+                    }
+                } else {
+                    this->pipeline = new Pipeline(4);
+                }
+            } else {
+                std::cerr << "Error: Bad type for core config" << std::endl;
+                return (false);
+            }
+        } else {
+            std::cerr << "Error: Missing core config" << std::endl;
+            return (false);
+        }
         if (auto netConfig = std::get_if<zia::api::Conf>(&config.at("Net").v)) {
-            if (auto netInternConfig = std::get_if<zia::api::Conf>(&netConfig->at("config").v)) {
-                if (!this->net || !this->net->config(*netInternConfig)) {
+            std::string netpath;
+            if (netConfig->find("path") == netConfig->end()) {
+                netpath = "";
+            } else {
+                if (auto tmpNetPath = std::get_if<std::string>(&netConfig->at("path").v)) {
+                    netpath = *tmpNetPath;
+                }
+            }
+            if (auto libname = std::get_if<std::string>(&netConfig->at("lib").v)) {
+                if (!this->moduleLoader.loadLibrary(netpath, *libname)) {
+                    std::cerr << "Error: Failed to load " << netpath << *libname << std::endl;
+                    return (false);
+                }
+            }
 
+            if (!(this->net = this->moduleLoader.loadNetwork())) {
+                std::cerr << "Error: Failed to instanciate module Net" << std::endl;
+                return (false);
+            }
+
+            if (auto netInternConfig = std::get_if<zia::api::Conf>(&netConfig->at("config").v)) {
+                if (!this->net->config(*netInternConfig)) {
                     return (false);
                 }
             } else {
@@ -57,10 +87,12 @@ bool Core::config(const zia::api::Conf& config) {
                     std::cerr << "Error: bad Module conf type" << std::endl;
                     return (false);
                 }
-                if (auto tmpPath = std::get_if<std::string>(&moduleConf->at("path").v)) {
-                path = *tmpPath;
+                if (moduleConf->find("path") != moduleConf->end()) {
+                    if (auto tmpPath = std::get_if<std::string>(&moduleConf->at("path").v)) {
+                        path = *tmpPath;
+                    }
                 } else {
-                path = "";
+                    path = "";
                 }
                 if (!(name = std::get_if<std::string>(&moduleConf->at("name").v))) {
                     std::cerr << "Error: Missing field name in a Module" << std::endl;
@@ -83,9 +115,7 @@ bool Core::config(const zia::api::Conf& config) {
                         std::cerr << "Error: Configuration of module " << *name << " failed" << std::endl;
                         return (false);
                     }
-                    this->pipeline->insert(this->pipeline->end(),
-                                           std::pair<std::string, std::shared_ptr<zia::api::Module>>(*name,
-                                                                                                     std::shared_ptr<zia::api::Module>(loadedModule)));
+                    this->pipeline->push_back(std::shared_ptr<zia::api::Module>(loadedModule));
                 } else {
                     std::cerr << "Error: can't load module from library " << path << *lib << std::endl;
                     return (false);

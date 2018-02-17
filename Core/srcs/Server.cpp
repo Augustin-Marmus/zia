@@ -4,7 +4,8 @@
 
 #include "Server.hpp"
 
-Server::Server(const std::string &configFile) {
+Server::Server(const std::string &configFile) : core(nullptr) {
+    std::cout << "     -----Welcome to RedTeam's Zia-----" << std::endl;
     this->configFile = configFile;
 }
 
@@ -29,6 +30,7 @@ bool Server::run() {
 		if (!this->core->run(*this->config)) {
 			return (false);
 		}
+        std::cout << "Server is runnning" << std::endl;
         watcher.waitForModification();
         this->core->stop();
     }

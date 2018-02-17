@@ -16,21 +16,24 @@ Pipeline::~Pipeline() {
 void Pipeline::run(zia::api::Net::Raw req, zia::api::NetInfo netInfo, zia::api::Net& network) const {
     this->pool->runAsync([this, req, netInfo, &network] {
         zia::api::HttpDuplex httpDuplex;
-
         std::string tmp;
-        for (auto c : req) {
+
+        for (auto& c : req) {
             tmp.push_back(static_cast<char>(c));
         }
         std::cout << "[" << netInfo.ip.str << ":" << netInfo.port << "]: " << tmp << std::flush;
         httpDuplex.raw_req = req;
         httpDuplex.raw_resp = req;
-        for (auto it = this->begin(); it != this->end(); it++) {
-            if (!it->second->exec(httpDuplex)) {
-                it = this->end();
+        for (auto& it : *this){
+            if (!it->exec(httpDuplex)){
                 break;
             }
         }
         network.send(netInfo.sock, httpDuplex.raw_resp);
+        if (httpDuplex.resp.headers.find("Connection") != httpDuplex.resp.headers.end()
+            && httpDuplex.resp.headers["Connection"] == "close") {
+            netInfo.sock->close();
+        }
     });
 }
 
