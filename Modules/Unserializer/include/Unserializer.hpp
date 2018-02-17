@@ -17,10 +17,8 @@ public:
 
     virtual bool    config(const zia::api::Conf& conf);
     virtual bool    exec(zia::api::HttpDuplex& http);
-    bool            setResponse(zia::api::HttpDuplex& http);
-    bool            convertToByte(zia::api::HttpDuplex& http);
-private:
-    std::stringstream   ss;
+    bool            setResponse(std::stringstream& ss, zia::api::HttpDuplex& http);
+    bool            convertToByte(std::stringstream& ss, zia::api::HttpDuplex& http);
 };
 
 #endif              //CPP_ZIA_UNSERIALIZER_HPP

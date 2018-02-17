@@ -17,11 +17,9 @@ public:
 
     virtual bool    config(const zia::api::Conf& conf);
     virtual bool    exec(zia::api::HttpDuplex& http);
-    bool            parseMethodVersionUri(zia::api::HttpDuplex& http);
-    bool            parseHeaders(zia::api::HttpDuplex& http);
-    bool            parseBody(zia::api::HttpDuplex& http);
-private:
-    std::istringstream     reqStream;
+    bool            parseMethodVersionUri(std::istringstream& reqStream, zia::api::HttpDuplex& http);
+    bool            parseHeaders(std::istringstream& reqStream, zia::api::HttpDuplex& http);
+    bool            parseBody(std::istringstream& reqStream, zia::api::HttpDuplex& http);
 };
 
 #endif              //CPP_ZIA_SERIALIZER_HPP

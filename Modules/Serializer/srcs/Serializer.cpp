@@ -28,12 +28,12 @@ bool        Serializer::config(const zia::api::Conf& conf) {
     return true;
 }
 
-bool        Serializer::parseMethodVersionUri(zia::api::HttpDuplex& http) {
+bool        Serializer::parseMethodVersionUri(std::istringstream& reqStream, zia::api::HttpDuplex& http) {
   const std::regex  mvuRegex("((?:.*)) ((?:.*)) ((?:.*))\r");
   std::string       line;
   std::smatch       match;
 
-  getline(this->reqStream, line);
+  getline(reqStream, line);
   if (std::regex_match(line, match, mvuRegex) && match.size() == 4) {
     for (size_t i = 1; i < match.size(); ++i) {
       if (i == 1) http.req.method = methodMap.find(match[i].str()) != methodMap.end() ? methodMap[match[i].str()] : zia::api::http::Method::unknown;
@@ -46,38 +46,38 @@ bool        Serializer::parseMethodVersionUri(zia::api::HttpDuplex& http) {
   return false;
 }
 
-bool        Serializer::parseHeaders(zia::api::HttpDuplex& http) {
+bool        Serializer::parseHeaders(std::istringstream& reqStream, zia::api::HttpDuplex& http) {
   const std::regex headerRegex("((?:.*)): ((?:.*))\r");
   std::string      line;
   std::smatch      match;
 
-  while (getline(this->reqStream, line) && std::regex_match(line, match, headerRegex)) {
+  while (getline(reqStream, line) && std::regex_match(line, match, headerRegex)) {
     http.req.headers[match[1].str()] = match[2].str();
   }
 
   return true;
 }
 
-bool        Serializer::parseBody(zia::api::HttpDuplex& http) {
+bool        Serializer::parseBody(std::istringstream& reqStream, zia::api::HttpDuplex& http) {
   std::string   line;
 
-  while (getline(this->reqStream, line)) {
+  while (getline(reqStream, line)) {
     for (auto it: line) {
       http.req.body.push_back(static_cast<std::byte>(it));
     }
   }
 
-  this->reqStream.clear();
   return true;
 }
 
 bool        Serializer::exec(zia::api::HttpDuplex& http) {
     std::string   convertedString;
+    std::istringstream  reqStream;
 
     for (auto& it: http.raw_req) {
       convertedString += static_cast<char>(it);
     }
-    this->reqStream.str(convertedString);
+    reqStream.str(convertedString);
 
-    return this->parseMethodVersionUri(http) && this->parseHeaders(http) && this->parseBody(http);
+    return this->parseMethodVersionUri(reqStream, http) && this->parseHeaders(reqStream, http) && this->parseBody(reqStream, http);
 }

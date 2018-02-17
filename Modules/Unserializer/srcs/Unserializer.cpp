@@ -60,20 +60,20 @@ bool        Unserializer::config(const zia::api::Conf& conf) {
   return true;
 }
 
-bool        Unserializer::setResponse(zia::api::HttpDuplex& http) {
-  this->ss << versionMap[http.resp.version] << " " << http.resp.status << " " << statusMap[http.resp.status] << std::endl;
+bool        Unserializer::setResponse(std::stringstream& ss, zia::api::HttpDuplex& http) {
+  ss << versionMap[http.resp.version] << " " << http.resp.status << " " << statusMap[http.resp.status] << std::endl;
 
   for (auto& it: http.resp.headers) {
-    this->ss << it.first << ": " << it.second << std::endl;
+    ss << it.first << ": " << it.second << std::endl;
   }
 
   return true;
 }
 
-bool        Unserializer::convertToByte(zia::api::HttpDuplex& http) {
+bool        Unserializer::convertToByte(std::stringstream& ss, zia::api::HttpDuplex& http) {
   http.raw_resp.clear();
 
-  for (auto& it: this->ss.str()) {
+  for (auto& it: ss.str()) {
     http.raw_resp.push_back(static_cast<std::byte>(it));
   }
 
@@ -85,5 +85,7 @@ bool        Unserializer::convertToByte(zia::api::HttpDuplex& http) {
 }
 
 bool        Unserializer::exec(zia::api::HttpDuplex& http) {
-  return this->setResponse(http) && this->convertToByte(http);
+  std::stringstream ss;
+
+  return this->setResponse(ss, http) && this->convertToByte(ss, http);
 }
