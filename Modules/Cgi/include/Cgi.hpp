@@ -25,8 +25,8 @@ public:
 private:
     const char      **createVirtualEnv(const zia::api::HttpRequest& req, const zia::api::NetInfo& net);
     const char      **mapToTab(const std::map<std::string, std::string>& env);
-    bool            handleFather(int fd[2], pid_t pid, zia::api::HttpDuplex& http);
-    bool            handleSon(zia::api::HttpDuplex& http, int fd[2], const char **env);
+    bool            handleFather(int fd_in[2], int fd_out[2], pid_t pid, zia::api::HttpDuplex& http);
+    bool            handleSon(zia::api::HttpDuplex& http, int fd_in[2],int fd_out[2], const char **env);
     bool            checkFile(const std::string& uri);
     void            sendResponse(std::string body, zia::api::HttpDuplex& http);
     const std::string     *getValueByKey(const std::string& key , const zia::api::Conf& conf);
