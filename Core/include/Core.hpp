@@ -19,8 +19,9 @@ public:
 
 private:
     bool            config(const zia::api::Conf& config);
+    bool            loadCoreModule(const std::string& lib, const std::string& path);
 
-    Pipeline*                       pipeline;
+        Pipeline*                       pipeline;
     zia::api::Net*                  net;
     ModuleLoader                    moduleLoader;
 };

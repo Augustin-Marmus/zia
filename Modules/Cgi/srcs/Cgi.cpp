@@ -211,11 +211,16 @@ void    Cgi::sendIE(zia::api::HttpDuplex& http, zia::api::http::Status status)
 
 void    Cgi::sendNotAuthorized(zia::api::HttpDuplex& http, zia::api::http::Status status)
 {
-    std::string body("<html><head>\n<title>403 NotAuthorized</title>\n</head><body>\n<h1>Not Authorized</h1>\n<p>You don't are alowed to go to  " + http.req.uri + ".</p>\n</body></html>\r\n");
-    std::string res("HTTP1.1 403 OK\r\nContent-Length: " + std::to_string(body.length()) + "\r\nContent-Type: text/html; charset=UTF-8\r\nstatus: 403\r\n\r\n");
-    http.raw_resp.clear();
-    for (auto c : res) {http.raw_resp.push_back(static_cast<std::byte>(c));}
-    for (auto c : body) {http.raw_resp.push_back(static_cast<std::byte>(c));}
+    std::cout << "send this one" << std::endl;
+    std::string body("\r\n\r\n<html><head>\n<title>403 NotAuthorized</title>\n</head><body>\n<h1>Not Authorized</h1>\n<p>You don't are alowed to go to  " + http.req.uri + ".</p>\n</body></html>\r\n");
+    http.resp.status = status;
+    http.resp.headers["Content-Type"] = "text/html; charset=UTF-8";
+    http.resp.headers["Content-Length"] = std::to_string(body.length() - 4);
+    http.resp.headers["status"] = "500";
+    http.resp.body.clear();
+    for (auto c : body) {
+        http.resp.body.push_back(static_cast<std::byte>(c));
+    }
 }
 
 bool    Cgi::exec(zia::api::HttpDuplex& http)

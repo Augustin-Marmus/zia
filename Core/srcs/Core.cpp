@@ -22,6 +22,21 @@ bool Core::run(const zia::api::Conf& config) {
     return (this->net->run(this->pipeline->getCallback(*this->net)));
 }
 
+bool Core::loadCoreModule(const std::string& lib, const std::string& path){
+
+   if (!this->moduleLoader.loadLibrary(path, lib)) {
+        std::cerr << "Error: Unable to load Library " << path << lib << std::endl;
+        return (false);
+    }
+    if (zia::api::Module *loadedModule = this->moduleLoader.loadModule()) {
+        this->pipeline->push_back(std::shared_ptr<zia::api::Module>(loadedModule));
+    } else {
+        std::cerr << "Error: can't load module from library " << path <<lib << std::endl;
+        return (false);
+    }
+    return (true);
+}
+
 bool Core::config(const zia::api::Conf& config) {
     try {
         if (config.find("Core") != config.end()) {
@@ -77,6 +92,9 @@ bool Core::config(const zia::api::Conf& config) {
 
         //TODO Load Pipeline's Modules
         if (auto moduleList = std::get_if<zia::api::ConfArray>(&config.at("Modules").v)) {
+            if (!this->loadCoreModule("zia-serializer", "./")){
+                return (false);
+            }
             for (auto item : *moduleList) {
                 const zia::api::Conf *moduleConf;
                 const zia::api::Conf *moduleInternConfig;
@@ -120,6 +138,9 @@ bool Core::config(const zia::api::Conf& config) {
                     std::cerr << "Error: can't load module from library " << path << *lib << std::endl;
                     return (false);
                 }
+            }
+            if (!this->loadCoreModule("zia-unserializer", "./")){
+                return (false);
             }
             return (true);
         } else {
