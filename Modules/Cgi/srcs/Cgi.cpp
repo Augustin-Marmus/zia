@@ -193,30 +193,37 @@ bool    Cgi::handleFather(int fd_in[2],int fd_out[2], pid_t pid, zia::api::HttpD
 }
 
 void    Cgi::sendNotFound(zia::api::HttpDuplex& http, zia::api::http::Status status){
-    std::string body("<html><head>\n<title>404 Not Found</title>\n</head><body>\n<h1>Not Found</h1>\n<p>The requested URL " + http.req.uri + " was not found on this server.</p>\n</body></html>\r\n");
-    std::string res("HTTP1.1 404 OK\r\nContent-Length: " + std::to_string(body.length()) + "\r\nContent-Type: text/html; charset=UTF-8\r\nstatus: 404\r\n\r\n");
-    http.raw_resp.clear();
-    for (auto c : res) {http.raw_resp.push_back(static_cast<std::byte>(c));}
-    for (auto c : body) {http.raw_resp.push_back(static_cast<std::byte>(c));}
+    std::string body("\r\n\r\n<html><head>\n<title>404 Not Found</title>\n</head><body>\n<h1>Not Found</h1>\n<p>The requested URL " + http.req.uri + " was not found on this server.</p>\n</body></html>\r\n");
+    http.resp.status = status;
+    http.resp.headers["Content-Type"] = "text/html; charset=UTF-8";
+    http.resp.headers["Content-Length"] = std::to_string(body.length() - 4);
+    http.resp.headers["status"] = "404";
+    http.resp.body.clear();
+    for (auto c : body) {
+        http.resp.body.push_back(static_cast<std::byte>(c));
+    }
 }
 
 void    Cgi::sendIE(zia::api::HttpDuplex& http, zia::api::http::Status status)
 {
-    std::string body("<html><head>\n<title>500 OOOOOOPPPSSSYYY</title>\n</head><body>\n<h1>Something went wrong ... (augustin, notre stagiaire, a encore esseye de commit ...)</h1></body></html>\r\n");
-    std::string res("HTTP1.1 500 OOPSY\r\nContent-Length: " + std::to_string(body.length()) + "\r\nContent-Type: text/html; charset=UTF-8\r\nstatus: 500\r\n\r\n");
-    http.raw_resp.clear();
-    for (auto c : res) {http.raw_resp.push_back(static_cast<std::byte>(c));}
-    for (auto c : body) {http.raw_resp.push_back(static_cast<std::byte>(c));}
-}
-
-void    Cgi::sendNotAuthorized(zia::api::HttpDuplex& http, zia::api::http::Status status)
-{
-    std::cout << "send this one" << std::endl;
-    std::string body("\r\n\r\n<html><head>\n<title>403 NotAuthorized</title>\n</head><body>\n<h1>Not Authorized</h1>\n<p>You don't are alowed to go to  " + http.req.uri + ".</p>\n</body></html>\r\n");
+    std::string body("\r\n\r\n<html><head>\n<title>500 OOOOOOPPPSSSYYY</title>\n</head><body>\n<h1>Something went wrong ... (augustin, notre stagiaire, a encore esseye de commit ...)</h1></body></html>\r\n");
     http.resp.status = status;
     http.resp.headers["Content-Type"] = "text/html; charset=UTF-8";
     http.resp.headers["Content-Length"] = std::to_string(body.length() - 4);
     http.resp.headers["status"] = "500";
+    http.resp.body.clear();
+    for (auto c : body) {
+        http.resp.body.push_back(static_cast<std::byte>(c));
+    }
+}
+
+void    Cgi::sendNotAuthorized(zia::api::HttpDuplex& http, zia::api::http::Status status)
+{
+    std::string body("\r\n\r\n<html><head>\n<title>403 NotAuthorized</title>\n</head><body>\n<h1>Not Authorized</h1>\n<p>You don't are alowed to go to  " + http.req.uri + ".</p>\n</body></html>\r\n");
+    http.resp.status = status;
+    http.resp.headers["Content-Type"] = "text/html; charset=UTF-8";
+    http.resp.headers["Content-Length"] = std::to_string(body.length() - 4);
+    http.resp.headers["status"] = "403";
     http.resp.body.clear();
     for (auto c : body) {
         http.resp.body.push_back(static_cast<std::byte>(c));
