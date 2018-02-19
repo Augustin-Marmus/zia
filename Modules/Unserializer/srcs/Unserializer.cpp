@@ -61,10 +61,10 @@ bool        Unserializer::config(const zia::api::Conf& conf) {
 }
 
 bool        Unserializer::setResponse(std::stringstream& ss, zia::api::HttpDuplex& http) {
-  ss << versionMap[http.resp.version] << " " << http.resp.status << " " << statusMap[http.resp.status] << std::endl;
+  ss << versionMap[http.resp.version] << " " << http.resp.status << " " << statusMap[http.resp.status] << "\r\n";
 
   for (auto& it: http.resp.headers) {
-    ss << it.first << ": " << it.second << std::endl;
+    ss << it.first << ": " << it.second << "\r\n";
   }
 
   return true;
@@ -86,7 +86,6 @@ bool        Unserializer::convertToByte(std::stringstream& ss, zia::api::HttpDup
 
 bool        Unserializer::exec(zia::api::HttpDuplex& http) {
   std::stringstream ss;
-  //TODO a modif ?
-  ss << "HTTP1.1 ";
+
   return this->setResponse(ss, http) && this->convertToByte(ss, http);
 }
