@@ -96,6 +96,7 @@ zia::api::ConfArray ConfParser::toConfArray(std::string All)
 
 	All.erase(0, 1);
 	All.erase(All.length()-1);
+
 	while (!All.empty()) {
 		tmp = All.substr(All.find("{"), utils.getEnd(All, "{", "}"));
 		All.erase(All.find(tmp), All.find(tmp)+tmp.length());
@@ -130,11 +131,14 @@ zia::api::ConfObject ConfParser::toConfObj(std::string All)
 				All.erase(0, 1);
 			elem = getPair(tmp);
 		}
-		else if (utils.extract(All, "\"", ",").find("[") != All.npos)
+		else if (utils.extract(All, "\"", ",").find("[") != All.npos || utils.getFragment(All, "[", "]").find("[") != All.npos)
 		{
-			key = All.substr(All.find("\""), All.find(":")+1);
+			key = getKey(All);
 			tmp = utils.getFragment(All, "[", "]");
 			elem.first = key;
+
+			key = All.substr(All.find("\""), All.find(":")+1);
+
 			elem.second.v = toConfArray(tmp);
 			All.erase(All.find(key), All.find(key)+key.length());
 			All.erase(All.find(tmp), All.find(tmp)+tmp.length());
@@ -197,6 +201,12 @@ zia::api::ConfObject *ConfParser::parse()
 {
 	zia::api::ConfObject *All = new zia::api::ConfObject();
 
+	if (!utils.CheckFile(Content))
+	{
+		std::cerr << "FAIL!" << std::endl;
+		exit(84);
+	}
+
 	Content.erase(0,1);
 	Content.erase(Content.length()-2);
 
@@ -208,7 +218,6 @@ zia::api::ConfObject *ConfParser::parse()
 	{
 		std::cerr << "Ah! Out of Range error: " << err.what() << '\n';
 	}
-
 	return All;
 }
 

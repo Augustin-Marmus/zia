@@ -74,8 +74,9 @@ int ParserUtils::getEnd(std::string all, std::string begin, std::string end) //u
 
 bool ParserUtils::CheckStr(std::string All) //utils
 {
-	if (extract(All, "\"", "\0").find(",") == All.npos && extract(All, "\"", "\0").find("{") != All.npos)
+	if (extract(All, "\"", "\0").find(",") == All.npos && extract(All, "\"", "\0").find("{") != All.npos && extract(All, "\"", "\0").find("[") != All.npos)
 		return false;
+
 	return (extract(All, "\"", ",").find("{") == All.npos &&
 			extract(All, "\"", ",").find("[") == All.npos);
 }
@@ -95,4 +96,12 @@ std::string ParserUtils::ClearIt(std::string str) //utils
 {
 	str.erase(rmSpc(str.begin(), str.end(), isspace), str.end());
 	return str;
+}
+
+bool ParserUtils::CheckFile(std::string All)
+{
+	All = ClearIt(All);
+	if (All[0] != '{' || All[All.length()-1] != '}')
+		return false;
+	return true;
 }

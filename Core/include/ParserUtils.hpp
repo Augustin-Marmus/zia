@@ -23,6 +23,7 @@ public:
 	int getEnd(std::string all, std::string begin, std::string end);
 	bool CheckStr(std::string All);
 	std::string ClearIt(std::string str);
+	bool CheckFile(std::string All);
 
 	template<typename T, typename P>
 	T rmSpc(T start, T end, P p);

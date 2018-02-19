@@ -65,14 +65,14 @@ endif (WIN32)
 if (UNIX)
     target_link_libraries(zia dl pthread)
 
-    add_executable(testCore
+    file (GLOB_RECURSE
+            src_files_common
             ${CMAKE_CURRENT_LIST_DIR}/include/Core.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/Server.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/Pipeline.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/ThreadPool.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/ModuleLoader.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/IModuleLoader.hpp
-            ${CMAKE_CURRENT_LIST_DIR}/include/ISocket.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/UnixModuleLoader.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/FileWatcher.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/IFileWatcher.hpp
@@ -93,11 +93,20 @@ if (UNIX)
             ${CMAKE_CURRENT_LIST_DIR}/srcs/UnixFileWatcher.cpp
             ${CMAKE_CURRENT_LIST_DIR}/srcs/ConfParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/srcs/ParserUtils.cpp
-
-            ${CMAKE_CURRENT_LIST_DIR}/tests/testCore.cpp
             )
+
+        add_executable(testConfig
+                ${CMAKE_CURRENT_LIST_DIR}/tests/testConfig.cpp
+                ${src_files_common}
+                )
+
+        add_executable(testCore
+                ${CMAKE_CURRENT_LIST_DIR}/tests/testCore.cpp
+                ${src_files_common}
+                )
+    target_link_libraries(testConfig ${Boost_LIBRARIES} dl pthread)
     target_link_libraries(testCore ${Boost_LIBRARIES} dl pthread)
-    add_test(TestCore testCore)
+    add_test(TestCore testCore TestConfig TestConfig)
 endif(UNIX)
 
 if (WIN32)
