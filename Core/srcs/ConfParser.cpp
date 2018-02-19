@@ -204,7 +204,7 @@ zia::api::ConfObject *ConfParser::parse()
 	if (!utils.CheckFile(Content))
 	{
 		std::cerr << "FAIL!" << std::endl;
-		exit(84);
+		return NULL;
 	}
 
 	Content.erase(0,1);
@@ -217,6 +217,7 @@ zia::api::ConfObject *ConfParser::parse()
 	} catch (const std::out_of_range& err)
 	{
 		std::cerr << "Ah! Out of Range error: " << err.what() << '\n';
+		return NULL;
 	}
 	return All;
 }
