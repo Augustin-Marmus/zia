@@ -15,11 +15,13 @@ Server::~Server() {
 
 bool Server::reloadConfig() {
     try {
-		if (ConfParser(this->configFile).parse() == NULL)
-			return false;
-        	this->config.reset(ConfParser(this->configFile).parse());
+        auto tmp = ConfParser(this->configFile).parse();
+		if (tmp == NULL) {
+            return false;
+        }
+        this->config.reset(tmp);
     } catch (const std::exception& err) {
-        std::cerr << err.what() << std::endl;
+        std::cerr << "Conf Error: "<< err.what() << std::endl;
         return (false);
     }
 	return (true);
