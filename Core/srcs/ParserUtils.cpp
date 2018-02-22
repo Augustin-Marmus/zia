@@ -74,9 +74,15 @@ int ParserUtils::getEnd(std::string all, std::string begin, std::string end) //u
 
 bool ParserUtils::CheckStr(std::string All) //utils
 {
-	if (extract(All, "\"", "\0").find(",") == All.npos && extract(All, "\"", "\0").find("{") != All.npos && extract(All, "\"", "\0").find("[") != All.npos)
+	if (extract(All, "\"", "\0").find(",") == All.npos && extract(All, "\"", "\0").find("{") != All.npos && extract(All, "\"", "\0").find("[") != All.npos) {
 		return false;
-
+	}
+	else if (All[All.find(":")+1] == '{') {
+//		std::cout << "config:" << All[All.find(":")+1] << std::endl << std::endl;
+//		std::cout << "ALLL" << All << "<---nb-->" << extract(All, "\"", "\0").find(",") << " npos->" << All.npos
+//				  << std::endl << std::endl;
+		return false;
+	}
 	return (extract(All, "\"", ",").find("{") == All.npos &&
 			extract(All, "\"", ",").find("[") == All.npos);
 }
