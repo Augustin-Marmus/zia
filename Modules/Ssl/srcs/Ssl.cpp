@@ -25,12 +25,24 @@ Ssl::~Ssl() {
 bool Ssl::config(const zia::api::Conf &conf) {
     const long long *port;
     const std::string *ipBinding;
+    const std::string *cert;
+    const std::string *key;
+
     if (!(port = std::get_if<long long>(&conf.at("port").v))) {
         std::cerr << "Error: Missing port field in Net configuration" << std::endl;
         return (false);
     }
     if (!(ipBinding = std::get_if<std::string>(&conf.at("ip_binding").v))) {
         std::cerr << "Error: Missing ip_binding field in Net configuration" << std::endl;
+        return (false);
+    }
+
+    if (!(cert = std::get_if<std::string>(&conf.at("certificate").v))) {
+        std::cerr << "Error: Missing port field in Net configuration" << std::endl;
+        return (false);
+    }
+    if (!(key = std::get_if<std::string>(&conf.at("key").v))) {
+        std::cerr << "Error: Missing port field in Net configuration" << std::endl;
         return (false);
     }
 
@@ -46,12 +58,12 @@ bool Ssl::config(const zia::api::Conf &conf) {
 
     SSL_CTX_set_ecdh_auto(ctx, 1);
 
-    if (SSL_CTX_use_certificate_file(ctx, "/home/louis/tek3/cpp_zia/Modules/Ssl/cert/server.cert", SSL_FILETYPE_PEM) <= 0) {
+    if (SSL_CTX_use_certificate_file(ctx, (*cert).c_str(), SSL_FILETYPE_PEM) <= 0) {
         ERR_print_errors_fp(stderr);
         return false;
     }
 
-    if (SSL_CTX_use_PrivateKey_file(ctx, "/home/louis/tek3/cpp_zia/Modules/Ssl/cert/server.key", SSL_FILETYPE_PEM) <= 0 ) {
+    if (SSL_CTX_use_PrivateKey_file(ctx, (*key).c_str(), SSL_FILETYPE_PEM) <= 0 ) {
         ERR_print_errors_fp(stderr);
         return false;
     }

@@ -8,6 +8,8 @@
     "lib" : "zia-ssl",
     "config" : {
       "port" : 1331,
+      "certificate": "/home/louis/tek3/cpp_zia/Modules/Ssl/cert/server.cert",
+      "key" : "/home/louis/tek3/cpp_zia/Modules/Ssl/cert/server.key",
       "ip_binding" : "0.0.0.0"
     }
   },
