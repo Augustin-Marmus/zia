@@ -58,8 +58,6 @@ std::pair<std::string, zia::api::ConfValue> ConfParser::getValueType(std::pair<s
 	}
 	else
 	{
-		std::cout << "elem" << elem << std::endl;
-
 		ll = std::stoll(elem, &sz, 0);
 		elemConf.second.v = ll;
 	}
@@ -133,7 +131,7 @@ zia::api::ConfObject ConfParser::toConfObj(std::string All)
 				All.erase(0, 1);
 			elem = getPair(tmp);
 		}
-		else if (utils.extract(All, "\"", ",").find("[") != All.npos || utils.getFragment(All, "[", "]").find("[") != All.npos)
+		else if (utils.extract(All, "\"", ",").find("[") != All.npos || utils.extract(All, "[", "]").find("[") != All.npos)
 		{
 			key = getKey(All);
 			tmp = utils.getFragment(All, "[", "]");

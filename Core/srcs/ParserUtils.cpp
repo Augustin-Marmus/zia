@@ -35,19 +35,18 @@ std::string ParserUtils::getFragment(std::string all, std::string begin, std::st
 
 	while (!finder)
 	{
-		tmp = all[c];
-		if (all[c] == end[0])
+		if (all[c] && all[c] == end[0])
 			cmp--;
-		else if (all[c] == begin[0])
+		else if (all[c] && all[c] == begin[0])
 			cmp++;
 		if (cmp == 0)
 		{
-			Frag.append(tmp);
+			Frag.push_back(all[c]);
 			return Frag;
 		}
 		if (all[c+1] == '\0')
 			return Frag;
-		Frag.append(tmp);
+		Frag.push_back(all[c]);
 		c++;
 	}
 	return Frag;
