@@ -208,8 +208,8 @@ zia::api::ConfObject *ConfParser::parse()
 		return NULL;
 	}
 
-	Content.erase(0,1);
-	Content.erase(Content.length()-2);
+	Content.erase(0,Content.find_first_of('{')+1);
+	Content.erase(Content.find_last_of('}'));
 
 	try {
 		while (Content.find("{") != Content.npos) {

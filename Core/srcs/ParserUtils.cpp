@@ -11,7 +11,7 @@ ParserUtils::~ParserUtils() {
 	
 }
 
-std::string ParserUtils::extract(const std::string& str, const char *beg, const char *end) //utils
+std::string ParserUtils::extract(const std::string& str, const char *beg, const char *end)
 {
     std::size_t begPos;
     if ( (begPos = str.find(beg)) != std::string::npos )
@@ -24,7 +24,7 @@ std::string ParserUtils::extract(const std::string& str, const char *beg, const 
     return std::string();
 }
 
-std::string ParserUtils::getFragment(std::string all, std::string begin, std::string end) //utils
+std::string ParserUtils::getFragment(std::string all, std::string begin, std::string end)
 {
 	all.erase(0, 1);
 	int cmp = 0;
@@ -52,7 +52,7 @@ std::string ParserUtils::getFragment(std::string all, std::string begin, std::st
 	return Frag;
 }
 
-int ParserUtils::getEnd(std::string all, std::string begin, std::string end) //utils
+int ParserUtils::getEnd(std::string all, std::string begin, std::string end)
 {
 	int cmp = 0;
 	int c = all.find(begin);
@@ -65,29 +65,27 @@ int ParserUtils::getEnd(std::string all, std::string begin, std::string end) //u
 		else if (all[c] == begin[0])
 			cmp++;
 		if (cmp == 0)
-			finder = true;
+			return ++c;
+		if (all[c+1] == '\0')
+			return c;
 		c++;
 	}
 	return c;
 }
 
-bool ParserUtils::CheckStr(std::string All) //utils
+bool ParserUtils::CheckStr(std::string All)
 {
 	if (extract(All, "\"", "\0").find(",") == All.npos && extract(All, "\"", "\0").find("{") != All.npos && extract(All, "\"", "\0").find("[") != All.npos) {
 		return false;
 	}
-	else if (All[All.find(":")+1] == '{') {
-//		std::cout << "config:" << All[All.find(":")+1] << std::endl << std::endl;
-//		std::cout << "ALLL" << All << "<---nb-->" << extract(All, "\"", "\0").find(",") << " npos->" << All.npos
-//				  << std::endl << std::endl;
+	else if (All[All.find(":")+1] == '{')
 		return false;
-	}
 	return (extract(All, "\"", ",").find("{") == All.npos &&
 			extract(All, "\"", ",").find("[") == All.npos);
 }
 
 template<typename T, typename P>
-T ParserUtils::rmSpc(T start, T end, P p) //utils
+T ParserUtils::rmSpc(T start, T end, P p)
 {
 	T toRet = start;
 	for (T cmp = start; cmp != end ; ++cmp) {
@@ -97,7 +95,7 @@ T ParserUtils::rmSpc(T start, T end, P p) //utils
 	return toRet;
 }
 
-std::string ParserUtils::ClearIt(std::string str) //utils
+std::string ParserUtils::ClearIt(std::string str)
 {
 	str.erase(rmSpc(str.begin(), str.end(), isspace), str.end());
 	return str;
@@ -106,6 +104,7 @@ std::string ParserUtils::ClearIt(std::string str) //utils
 bool ParserUtils::CheckFile(std::string All)
 {
 	All = ClearIt(All);
+
 	if (All[0] != '{' || All[All.length()-1] != '}')
 		return false;
 	return true;
