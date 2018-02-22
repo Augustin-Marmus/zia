@@ -3,11 +3,11 @@
     "workers" : 4
   },
   "Net" : {
-    "name" : "network",
+    "name" : "ssl",
     "path" : "./",
-    "lib" : "zia-network",
+    "lib" : "zia-ssl",
     "config" : {
-      "port" : 1332,
+      "port" : 1331,
       "ip_binding" : "0.0.0.0"
     }
   },
