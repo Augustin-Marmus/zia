@@ -73,6 +73,10 @@ bool        Unserializer::setResponse(std::stringstream& ss, zia::api::HttpDuple
 bool        Unserializer::convertToByte(std::stringstream& ss, zia::api::HttpDuplex& http) {
   http.raw_resp.clear();
 
+  if (http.resp.body.size() > 0) {
+    ss << "\r\n";
+  }
+
   for (auto& it: ss.str()) {
     http.raw_resp.push_back(static_cast<std::byte>(it));
   }
