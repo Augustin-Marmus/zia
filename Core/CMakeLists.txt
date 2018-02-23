@@ -47,6 +47,8 @@ if (WIN32)
             ${CMAKE_CURRENT_LIST_DIR}/include/FileWatcher.hpp
             ${CMAKE_CURRENT_LIST_DIR}/include/IFileWatcher.hpp
 			${CMAKE_CURRENT_LIST_DIR}/include/WinFileWatcher.hpp
+			${CMAKE_CURRENT_LIST_DIR}/include/ConfParser.hpp
+            ${CMAKE_CURRENT_LIST_DIR}/include/ParserUtils.hpp
 
             sza/api/http.h
             sza/api/net.h
@@ -59,7 +61,9 @@ if (WIN32)
             ${CMAKE_CURRENT_LIST_DIR}/srcs/main.cpp
             ${CMAKE_CURRENT_LIST_DIR}/srcs/WinModuleLoader.cpp
             ${CMAKE_CURRENT_LIST_DIR}/srcs/ThreadPool.cpp
-			${CMAKE_CURRENT_LIST_DIR}/srcs/WinFileWatcher.cpp)
+			${CMAKE_CURRENT_LIST_DIR}/srcs/WinFileWatcher.cpp
+			${CMAKE_CURRENT_LIST_DIR}/srcs/ConfParser.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/srcs/ParserUtils.cpp)
 endif (WIN32)
 
 if (UNIX)
