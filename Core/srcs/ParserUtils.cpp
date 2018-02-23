@@ -26,7 +26,6 @@ std::string ParserUtils::extract(const std::string& str, const char *beg, const 
 
 std::string ParserUtils::getFragment(std::string all, std::string begin, std::string end)
 {
-	all.erase(0, 1);
 	int cmp = 0;
 	int c = all.find(begin);
 	std::string Frag;

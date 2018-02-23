@@ -42,8 +42,7 @@ std::pair<std::string, zia::api::ConfValue> ConfParser::getValueType(std::pair<s
 	bool bb;
 	double dd;
 	long long ll;
-
-
+	
 	zia::api::ConfObject  test;
 
 	if (elem.find(".") != elem.npos)
@@ -98,14 +97,14 @@ zia::api::ConfArray ConfParser::toConfArray(std::string All)
 	All.erase(All.length()-1);
 
 	while (!All.empty()) {
-		tmp = All.substr(All.find("{"), utils.getEnd(All, "{", "}"));
+		tmp = utils.getFragment(All, "{", "}");
 		All.erase(All.find(tmp), All.find(tmp)+tmp.length());
 		tmp.erase(0, 1);
 		tmp.erase(tmp.length()-1);
 		ConfObj = toConfObj(tmp);
 		ConfValue.v = ConfObj;
 		Array.push_back(ConfValue);
-		if (All[0] == ',')
+		if (All[0] == ',' || All[0] == '}')
 			All.erase(0, 1);
 	}
 	return Array;
@@ -126,8 +125,7 @@ zia::api::ConfObject ConfParser::toConfObj(std::string All)
 				tmp = utils.extract(All, "\"", "\0");
 			tmp.insert(0, "\"");
 			All.erase(All.find(tmp), All.find(tmp)+tmp.length());
-
-			if (All[0] == ',')
+			if (All[0] == ',' || All[0] == '{')
 				All.erase(0, 1);
 			elem = getPair(tmp);
 		}
@@ -136,20 +134,18 @@ zia::api::ConfObject ConfParser::toConfObj(std::string All)
 			key = getKey(All);
 			tmp = utils.getFragment(All, "[", "]");
 			elem.first = key;
-
 			key = All.substr(All.find("\""), All.find(":")+1);
-
 			elem.second.v = toConfArray(tmp);
 			All.erase(All.find(key), All.find(key)+key.length());
 			All.erase(All.find(tmp), All.find(tmp)+tmp.length());
 		}
 		else {
-			if (All[0] == '{')
+			if (All[0] == '{' || All[0] == ',')
 				All.erase(0, 1);
 			key = All.substr(All.find("\""), All.find(":")+1);
 			All.erase(All.find(key), All.find(key)+key.length());
 			key = getKey(key);
-			tmp = "";
+			tmp = utils.getFragment(All, "{", "}");
 
 			All.erase(All.find(tmp), All.find(tmp)+tmp.length());
 			if (All[1] == ',' && All[0] == '{')
@@ -158,9 +154,8 @@ zia::api::ConfObject ConfParser::toConfObj(std::string All)
 				All.erase(0, 1);
 				All.erase(All.length()-1);
 			}
-
 			elem.first = key;
-			elem.second.v = toConfObj(All);
+			elem.second.v = toConfObj(tmp);
 		}
 		res.insert(elem);
 	}
@@ -207,10 +202,8 @@ zia::api::ConfObject *ConfParser::parse()
 		std::cerr << "FAIL!" << std::endl;
 		return NULL;
 	}
-
 	Content.erase(0,Content.find_first_of('{')+1);
 	Content.erase(Content.find_last_of('}'));
-
 	try {
 		while (Content.find("{") != Content.npos) {
 			All->insert(ParseFirstBloc());
