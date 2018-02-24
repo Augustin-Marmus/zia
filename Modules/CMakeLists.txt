@@ -6,3 +6,5 @@ if (UNIX)
 endif (UNIX)
 include(${CMAKE_CURRENT_LIST_DIR}/Serializer/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/Unserializer/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/Ssl/CMakeLists.txt)
+
