@@ -4,8 +4,6 @@
 
 #include "SslSocket.hpp"
 
-
-
 SslSocket::SslSocket() {
     this->ctx = nullptr;
 }
@@ -24,7 +22,7 @@ int                     SslSocket::send(const std::string& str) {
 
 
 bool SslSocket::accept(zia::api::ImplSocket &socket) {
-    socklen_t addrLen;
+    int addrLen;
     auto unixSocket = dynamic_cast<SslSocket *>(&socket);
     if (unixSocket) {
         if ((unixSocket->socket = ::accept(this->socket, (struct sockaddr *)&unixSocket->addr, &addrLen)) < 0) {
