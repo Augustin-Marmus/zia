@@ -242,7 +242,6 @@ bool    Cgi::exec(zia::api::HttpDuplex& http)
 
     const char **env;
     if ((env = createVirtualEnv(http, http.info)) == nullptr){
-        std::cerr << "Cgi: ENV is NULL" << std::endl;
         return false;
     }
     pipe(fd_in);

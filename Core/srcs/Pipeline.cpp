@@ -20,7 +20,6 @@ void Pipeline::run(zia::api::Net::Raw req, zia::api::NetInfo netInfo, zia::api::
         for (auto& c : req) {
             tmp.push_back(static_cast<char>(c));
         }
-        std::cout << "[" << netInfo.ip.str << ":" << netInfo.port << "]: " << tmp << std::flush;
         httpDuplex.raw_req = req;
         httpDuplex.raw_resp = req;
         for (auto& it : *this){
@@ -30,11 +29,16 @@ void Pipeline::run(zia::api::Net::Raw req, zia::api::NetInfo netInfo, zia::api::
             }
         }
         send:
-            std::cout << "---------"<< std::endl;
+        std::cout << "====HDR==" << std::endl;
+            for (auto it : httpDuplex.resp.headers){
+                std::cout << it.first << "==" << it.second << std::endl;
+            }
+        std::cout << "====/HDR==" << std::endl;
+            std::cout << "----SENDING-----"<< std::endl;
             for (auto c : httpDuplex.raw_resp){
                 std::cout << (char)c ;
             }
-            std::cout << "---------"<< std::endl;
+            std::cout << "---/SENDING------"<< std::endl;
 
             network.send(netInfo.sock, httpDuplex.raw_resp);
                 if (httpDuplex.resp.headers.find("Connection") != httpDuplex.resp.headers.end()
