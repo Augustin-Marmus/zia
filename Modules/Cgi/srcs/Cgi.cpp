@@ -4,6 +4,7 @@
 
 #include "Cgi.hpp"
 #include "ISocket.hpp"
+#include <sstream>
 
 Cgi::Cgi()
 {}
@@ -148,8 +149,8 @@ bool    Cgi::handleSon(zia::api::HttpDuplex& http, int fd_in[2],int fd_out[2], c
 
 void    Cgi::sendResponse(std::string raw, zia::api::HttpDuplex& http)
 {
-    std::string header, body;
-    size_t      index;
+    std::string header, body, pre, post;
+    size_t      index, idx;
 
     index = raw.find(EOL EOL);
     header = raw.substr(0, index);
@@ -160,7 +161,19 @@ void    Cgi::sendResponse(std::string raw, zia::api::HttpDuplex& http)
     http.resp.version = zia::api::http::Version::http_1_1;
     http.resp.headers["Content-Length"] = std::to_string(body.length());
     zia::api::Net::Raw res;
-    for (auto c : raw) {
+    std::stringstream iss(header);
+    while(iss.good())
+    {
+        std::string SingleLine;
+        getline(iss,SingleLine,'\n');
+        idx = SingleLine.find(": ");
+        pre = SingleLine.substr(0, idx);
+        if (idx != std::string::npos){
+            post = SingleLine.substr(idx + 2);
+        }
+        http.resp.headers[pre] = post;
+    }
+    for (auto c : body) {
         http.resp.body.push_back(static_cast<std::byte>(c));
     }
 }
