@@ -11,6 +11,8 @@
 #include <Winsock2.h>
 #include "ISocket.hpp"
 
+typedef socklen_t	int;
+
 class WinSocket : public ISocket {
 public:
 	const static int MAXQUEUE = 1024;

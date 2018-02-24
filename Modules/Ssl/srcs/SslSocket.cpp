@@ -22,7 +22,7 @@ int                     SslSocket::send(const std::string& str) {
 
 
 bool SslSocket::accept(zia::api::ImplSocket &socket) {
-    int addrLen;
+    socklen_t addrLen;
     auto unixSocket = dynamic_cast<SslSocket *>(&socket);
     if (unixSocket) {
         if ((unixSocket->socket = ::accept(this->socket, (struct sockaddr *)&unixSocket->addr, &addrLen)) < 0) {
