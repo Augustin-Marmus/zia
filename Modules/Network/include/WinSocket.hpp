@@ -11,7 +11,7 @@
 #include <Winsock2.h>
 #include "ISocket.hpp"
 
-typedef socklen_t	int;
+typedef int socklen_t;
 
 class WinSocket : public ISocket {
 public:
