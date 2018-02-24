@@ -7,7 +7,7 @@
     "path" : "./",
     "lib" : "zia-network",
     "config" : {
-      "port" : 1335,
+      "port" : 1336,
       "certificate": "../../Modules/Ssl/cert/server.cert",
       "key" : "../../Modules/Ssl/cert/server.key",
       "ip_binding" : "0.0.0.0"
@@ -19,7 +19,7 @@
       "path" : "./",
       "lib" : "zia-html",
       "config" : {
-        "public" : "/home/louis/tek3/cpp_zia/Modules/Html/html"
+        "public" : "/home/marmus_a/Documents/rendu/cpp_zia/Modules/Html/html/"
       }
     }
   ]

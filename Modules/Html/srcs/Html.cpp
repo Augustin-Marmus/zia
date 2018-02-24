@@ -25,10 +25,8 @@ bool        Html::checkUriAndRequest(zia::api::HttpDuplex& html, std::ifstream& 
   }
   fileStream.open(this->htmlFolderPath + html.req.uri, std::ifstream::in);
 
-  for (auto it : map){
-      if (html.req.uri.substr(html.req.uri.find_last_of(".") + 1) == map.first){
-          html.resp.headers["Content-Type"] = map.second;
-      }
+      if (this->MimeType.find(html.req.uri.substr(html.req.uri.find_last_of(".") + 1)) != MimeType.end()) {
+          html.resp.headers["Content-Type"] = this->MimeType[html.req.uri.substr(html.req.uri.find_last_of(".") + 1)];
   }
 
   if (!fileStream) {
@@ -55,8 +53,6 @@ bool        Html::getFile(zia::api::HttpDuplex& html, std::ifstream& fileStream)
   stream << fileStream.rdbuf();
   fileStr = stream.str();
   for (auto& it: fileStr) {
-    if (it == '\n')
-      html.resp.body.push_back(static_cast<std::byte>('\r'));
     html.resp.body.push_back(static_cast<std::byte>(it));
   }
 
