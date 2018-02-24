@@ -29,16 +29,6 @@ void Pipeline::run(zia::api::Net::Raw req, zia::api::NetInfo netInfo, zia::api::
             }
         }
         send:
-        std::cout << "====HDR==" << std::endl;
-            for (auto it : httpDuplex.resp.headers){
-                std::cout << it.first << "==" << it.second << std::endl;
-            }
-        std::cout << "====/HDR==" << std::endl;
-            std::cout << "----SENDING-----"<< std::endl;
-            for (auto c : httpDuplex.raw_resp){
-                std::cout << (char)c ;
-            }
-            std::cout << "---/SENDING------"<< std::endl;
 
             network.send(netInfo.sock, httpDuplex.raw_resp);
                 if (httpDuplex.resp.headers.find("Connection") != httpDuplex.resp.headers.end()
