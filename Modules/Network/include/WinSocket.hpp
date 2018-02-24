@@ -11,6 +11,8 @@
 #include <Winsock2.h>
 #include "ISocket.hpp"
 
+typedef int socklen_t;
+
 class WinSocket : public ISocket {
 public:
 	const static int MAXQUEUE = 1024;
@@ -20,7 +22,7 @@ public:
 	virtual bool                    bind(const std::string& addr, const std::string& port);
 	virtual bool                    bind(const std::string& addr, int port);
 	virtual bool                    listen();
-	virtual bool                    accept(ISocket& socket);
+	virtual bool                    accept(zia::api::ImplSocket& socket);
 	virtual bool                    close();
 
 	virtual int                     send(const std::string& str);

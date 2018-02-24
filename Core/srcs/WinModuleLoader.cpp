@@ -14,24 +14,24 @@ WinModuleLoader::WinModuleLoader()
 WinModuleLoader::~WinModuleLoader()
 {
 	if (this->handler) {
-		this->unloadModule();
+		this->unloadLibrary();
 	}
 }
 
 bool WinModuleLoader::loadLibrary(const std::string & path, const std::string & file)
 {
 	if (this->handler) {
-		this->unloadModule();
+		this->unloadLibrary();
 	}
 
 	return (!!(this->handler = LoadLibrary(TEXT((path + file + ".dll").c_str()))));
 }
 
-zia::api::Module * WinModuleLoader::loadModule(const std::string & moduleName)
+zia::api::Module * WinModuleLoader::loadModule()
 {
 	zia::api::Module*		(*ptr)();
 
-	ptr = reinterpret_cast<zia::api::Module*(*)()>(GetProcAddress(this->handler, (std::string("get") + moduleName).c_str()));
+	ptr = reinterpret_cast<zia::api::Module*(*)()>(GetProcAddress(this->handler, "create"));
 	if (ptr) {
 		return (ptr());
 	} else {
@@ -43,7 +43,7 @@ zia::api::Net * WinModuleLoader::loadNetwork()
 {
 	zia::api::Net*		(*ptr)();
 
-	ptr = reinterpret_cast<zia::api::Net*(*)()>(GetProcAddress(this->handler, "getNetwork"));
+	ptr = reinterpret_cast<zia::api::Net*(*)()>(GetProcAddress(this->handler, "create"));
 	if (ptr) {
 		return (ptr());
 	} else {
@@ -51,8 +51,7 @@ zia::api::Net * WinModuleLoader::loadNetwork()
 	}
 }
 
-bool WinModuleLoader::unloadModule()
-{
+bool WinModuleLoader::unloadLibrary(){
 	this->handler = nullptr;
 	return (true);
 }

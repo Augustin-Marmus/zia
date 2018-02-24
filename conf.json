@@ -1,0 +1,26 @@
+{
+  "Core" : {
+    "workers" : 4
+  },
+  "Net" : {
+    "name" : "network",
+    "path" : "./",
+    "lib" : "zia-network",
+    "config" : {
+      "port" : 1336,
+      "certificate": "../../Modules/Ssl/cert/server.cert",
+      "key" : "../../Modules/Ssl/cert/server.key",
+      "ip_binding" : "0.0.0.0"
+    }
+  },
+  "Modules" : [
+    {
+      "name" : "html",
+      "path" : "./",
+      "lib" : "zia-html",
+      "config" : {
+        "public" : "/home/marmus_a/Documents/rendu/cpp_zia/Modules/Html/html/"
+      }
+    }
+  ]
+}

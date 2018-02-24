@@ -15,9 +15,9 @@ public:
     UnixModuleLoader();
     ~UnixModuleLoader();
     virtual bool                                    loadLibrary(const std::string& path, const std::string& file);
-    virtual zia::api::Module*                       loadModule(const std::string& moduleName);
+    virtual zia::api::Module*                       loadModule();
     virtual zia::api::Net*                          loadNetwork();
-    virtual bool                                    unloadModule();
+    virtual bool                                    unloadLibrary();
 
 private:
     void*                                       handler;
