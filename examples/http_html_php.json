@@ -1,0 +1,40 @@
+{
+  "Core" : {
+    "workers" : 4
+  },
+  "Net" : {
+    "name" : "network",
+    "path" : "./",
+    "lib" : "zia-network",
+    "config" : {
+      "port" : 1334,
+      "certificate": "../../Modules/Ssl/cert/server.cert",
+      "key" : "../../Modules/Ssl/cert/server.key",
+      "ip_binding" : "0.0.0.0"
+    }
+  },
+  "Modules" : [
+    {
+      "name" : "html",
+      "path" : "./",
+      "lib" : "zia-html",
+      "config" : {
+        "public" : "/home/louis/tek3/cpp_zia/Modules/Html/html/"
+      }
+    },
+    {
+      "name" : "cgi",
+      "path" : "./",
+      "lib" : "zia-cgi",
+      "config" : {
+        "php-cgi" : "/usr/bin/php-cgi",
+        "document_root" : "/home/louis/tek3/cpp_zia/Modules/Cgi",
+        "ip" : "127.0.0.1",
+        "port" : "1333",
+        "cgi_alias" : "/cgi-bin",
+        "server_software" : "zia-redteam1.5"
+      }
+    }
+
+  ]
+}

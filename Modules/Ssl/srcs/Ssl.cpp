@@ -167,6 +167,5 @@ void networkRoutine(Ssl* net) {
     }
 
     net->sockets.erase(net->sockets.begin(), net->sockets.end());
-    //net->sockets.remove_if([] (std::shared_ptr<ISocket>& socket) {return (true);});
     return;
 }

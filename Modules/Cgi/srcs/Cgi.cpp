@@ -34,7 +34,6 @@ bool        Cgi::checkFile(const std::string& rUri)
         uri = uri.substr(0, uri.find("?"));
     }
     if (uri.find("/cgi-bin/") != uri.npos) {
-        //script = uri.substr(uri.find("/cgi-bin/"));
     }
 }
 
@@ -87,6 +86,7 @@ const char **Cgi::createVirtualEnv(zia::api::HttpDuplex& dup, const zia::api::Ne
         script = uri.substr(uri.find(cgiDir) + cgiDir.size());
     }
     if (!script.size()){
+        this->sendNotFound(dup, zia::api::http::common_status::not_found);
         std::cout << "404 not found" << std::endl;
         return nullptr;
     }
@@ -112,7 +112,7 @@ const std::string     *Cgi::getValueByKey(const std::string& key, const zia::api
     const std::string *value;
 
     if (!(value = std::get_if<std::string>(&conf.at(key).v))) {
-        std::cerr << "Error: Missing field name in a Module" << std::endl;
+        std::cerr << "Error: Missing field name in a Module " << key<<std::endl;
         return (nullptr);
     }
     return (value);
@@ -139,7 +139,6 @@ bool    Cgi::handleSon(zia::api::HttpDuplex& http, int fd_in[2],int fd_out[2], c
             strdup(bin.c_str()),
             NULL
     };
-    //close(http.info.sock->close());
     dup2(fd_in[0], 0);
     dup2(fd_out[1], 1);
     close(fd_in[1]);
@@ -157,6 +156,8 @@ void    Cgi::sendResponse(std::string raw, zia::api::HttpDuplex& http)
     if (index != std::string::npos){
         body = raw.substr(index + 4);
     }
+    http.resp.headers.clear();
+    http.resp.body.clear();
     http.resp.status = zia::api::http::common_status::ok;
     http.resp.version = zia::api::http::Version::http_1_1;
     http.resp.headers["Content-Length"] = std::to_string(body.length());
@@ -208,6 +209,7 @@ bool    Cgi::handleFather(int fd_in[2],int fd_out[2], pid_t pid, zia::api::HttpD
 
 void    Cgi::sendNotFound(zia::api::HttpDuplex& http, zia::api::http::Status status){
     std::string body("<html><head>\n<title>404 Not Found</title>\n</head><body>\n<h1>Not Found</h1>\n<p>The requested URL " + http.req.uri + " was not found on this server.</p>\n</body></html>\r\n");
+    http.resp.headers.clear();
     http.resp.status = status;
     http.resp.headers["Content-Type"] = "text/html; charset=UTF-8";
     http.resp.headers["Content-Length"] = std::to_string(body.length());
@@ -223,6 +225,7 @@ void    Cgi::sendIE(zia::api::HttpDuplex& http, zia::api::http::Status status)
 {
     std::string body("<html><head>\n<title>500 OOOOOOPPPSSSYYY</title>\n</head><body>\n<h1>Something went wrong ... (augustin, notre stagiaire, a encore esseye de commit ...)</h1></body></html>\r\n");
     http.resp.status = status;
+    http.resp.headers.clear();
     http.resp.headers["Content-Type"] = "text/html; charset=UTF-8";
     http.resp.headers["Content-Length"] = std::to_string(body.length());
     http.resp.headers["status"] = "500";
