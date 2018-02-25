@@ -7,34 +7,19 @@
     "path" : "./",
     "lib" : "zia-ssl",
     "config" : {
-      "port" : 1334,
-      "port" : 1338,
+      "port" : 1332,
       "certificate": "../../Modules/Ssl/cert/server.cert",
       "key" : "../../Modules/Ssl/cert/server.key",
-      "port" : 8000,
       "ip_binding" : "0.0.0.0"
     }
   },
   "Modules" : [
     {
-
-      "name" : "auth",
-      "path" : "./",
-      "lib" : "zia-auth",
-      "config" : {
-        "login" : "admin",
-        "password" : "admin"
-      }
-    },
-    {
       "name" : "html",
-      "name" : "log",
       "path" : "./",
-      "lib" : "zia-logger",
+      "lib" : "zia-html",
       "config" : {
-        "file": false,
-        "filePath": "./log.txt",
-        "output": true
+        "public" : "/home/louis/tek3/cpp_zia/Modules/Html/html/"
       }
     },
     {
