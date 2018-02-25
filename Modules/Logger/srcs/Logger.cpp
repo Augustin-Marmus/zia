@@ -130,7 +130,7 @@ void Logger::putOutputLog(zia::api::HttpDuplex& http) {
 void Logger::putFileLog(zia::api::HttpDuplex& http) {
     std::ofstream myFile(filepath);
     if (myFile.is_open())
-        std::cout << "REQUEST -> " << this->vecMethod[int (http.req.method)].second << " " << http.req.uri << std::endl;
+        myFile << "REQUEST -> " << this->vecMethod[int (http.req.method)].second << " " << http.req.uri << std::endl;
     else
         std::cout << "Unable to open file" << std::endl;
 }
