@@ -19,6 +19,17 @@
       "config" : {}
     },
     {
+      "name" : "log",
+      "path" : "./",
+      "lib" : "zia-logger",
+      "config" : {
+        "file": true,
+        "filePath": "./",
+        "bdd": false,
+        "output": true
+      }
+    },
+    {
       "name" : "cgi",
       "path" : "./",
       "lib" : "zia-cgi",
