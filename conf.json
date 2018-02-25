@@ -7,7 +7,7 @@
     "path" : "./",
     "lib" : "zia-network",
     "config" : {
-      "port" : 8080,
+      "port" : 8000,
       "ip_binding" : "0.0.0.0"
     }
   },
@@ -23,9 +23,8 @@
       "path" : "./",
       "lib" : "zia-logger",
       "config" : {
-        "file": true,
-        "filePath": "./",
-        "bdd": false,
+        "file": false,
+        "filePath": "./log.txt",
         "output": true
       }
     },

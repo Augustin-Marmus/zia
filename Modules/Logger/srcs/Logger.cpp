@@ -68,48 +68,75 @@ Logger::Logger() {
 
 Logger::~Logger() {}
 
-bool    Logger::setConf(const zia::api::Conf& conf, std::string& confName) {
-    if (conf.find(confName) != conf.end()) {
-        if (auto fileConf = std::get_if<bool>(&conf.at(confName).v)) {
+bool    Logger::setConf(const zia::api::Conf& conf) {
+    if (conf.find("file") != conf.end()) {
+        if (auto fileConf = std::get_if<bool>(&conf.at("file").v)) {
             if (*fileConf)
+            {
                 this->file = true;
+            }
             else
                 this->file = false;
         } else {
-            std::cout << "ErrorConfig for" << confName << ". " << confName << " need a bool" << std::endl;
+            std::cout << "ErrorConfig for file. File need a bool" << std::endl;
             return false;
         }
     } else {
-        std::cout << "Cannot find " << confName << " file config." << std::endl;
+        std::cout << "Cannot find  file config." << std::endl;
+        return false;
+    }
+    if (conf.find("filePath") != conf.end()) {
+        if (auto fileConf = std::get_if<std::string>(&conf.at("filePath").v)) {
+            this->filepath = *fileConf;
+            if (this->filepath.size() <= 0)
+                return false;
+        } else {
+            std::cout << "ErrorConfig for filepath. filepath need a string" << std::endl;
+            return false;
+        }
+    } else {
+        std::cout << "Cannot find filepath config." << std::endl;
+        return false;
+    }
+    if (conf.find("output") != conf.end()) {
+        if (auto fileConf = std::get_if<bool>(&conf.at("output").v)) {
+            if (*fileConf)
+            {
+                this->output = true;
+            }
+            else
+                this->output = false;
+        } else {
+            std::cout << "ErrorConfig for output. Output need a bool" << std::endl;
+            return false;
+        }
+    } else {
+        std::cout << "Cannot find Output config." << std::endl;
         return false;
     }
     return true;
 }
 
 bool    Logger::config(const zia::api::Conf& conf) {
-    std::string confName;
-    confName = "file";
-    if (!this->setConf(conf, confName))
-        return false;
-    confName = "output";
-    if (!this->setConf(conf, confName))
+    if (!this->setConf(conf))
         return false;
     return (true);
 }
 
 void Logger::putOutputLog(zia::api::HttpDuplex& http) {
-    std::cout << "[" << http.info.ip.str << "] " << this->vecMethod[int (http.req.method)].second << " " << http.req.uri << " -> " << http.resp.status << " " << statusMap[http.resp.status]  << std::endl;
+    std::cout << "REQUEST -> " << this->vecMethod[int (http.req.method)].second << " " << http.req.uri << std::endl;
 }
 
 void Logger::putFileLog(zia::api::HttpDuplex& http) {
     std::ofstream myFile(filepath);
     if (myFile.is_open())
-        myFile << "[" << http.info.ip.str << "] " << this->vecMethod[int (http.req.method)].second << " " << http.req.uri << " -> " << http.resp.status << " " << statusMap[http.resp.status]  << std::endl;
+        std::cout << "REQUEST -> " << this->vecMethod[int (http.req.method)].second << " " << http.req.uri << std::endl;
     else
-        std::cout << "Unable to open file";
+        std::cout << "Unable to open file" << std::endl;
 }
 
 bool Logger::exec(zia::api::HttpDuplex& http) {
+    std::cout << output << std::endl;
     if (output)
         putOutputLog(http);
     if (file)

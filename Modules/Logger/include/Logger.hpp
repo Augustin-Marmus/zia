@@ -21,7 +21,7 @@ private:
     bool file;
     std::string filepath;
     bool output;
-    bool setConf(const zia::api::Conf& conf, std::string& confName);
+    bool setConf(const zia::api::Conf& conf);
     void putOutputLog(zia::api::HttpDuplex& http);
     void initVecMethod();
     void putFileLog(zia::api::HttpDuplex& http);
