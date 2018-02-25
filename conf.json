@@ -7,13 +7,22 @@
     "path" : "./",
     "lib" : "zia-network",
     "config" : {
-      "port" : 1336,
+      "port" : 1338,
       "certificate": "../../Modules/Ssl/cert/server.cert",
       "key" : "../../Modules/Ssl/cert/server.key",
       "ip_binding" : "0.0.0.0"
     }
   },
   "Modules" : [
+    {
+      "name" : "auth",
+      "path" : "./",
+      "lib" : "zia-auth",
+      "config" : {
+        "login" : "admin",
+        "password" : "admin"
+      }
+    },
     {
       "name" : "html",
       "path" : "./",
