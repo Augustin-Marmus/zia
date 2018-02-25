@@ -20,12 +20,11 @@
     },
     {
       "name" : "log",
-      "path" : "./",
+      "path" : "./log.txt",
       "lib" : "zia-logger",
       "config" : {
         "file": true,
         "filePath": "./",
-        "bdd": false,
         "output": true
       }
     },
